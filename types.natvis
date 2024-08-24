@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="bind::Array&lt;*&gt;">
+        <DisplayString>{{ size = {m_size}, capacity = {m_capacity} }}</DisplayString>
+        <Expand>
+            <IndexListItems>
+                <Size>m_size</Size>
+                <ValueNode>m_data[$i]</ValueNode>
+            </IndexListItems>
+        </Expand>
+    </Type>
+    <Type Name="bind::String">
+        <DisplayString>{m_str,[m_len]}</DisplayString>
+    </Type>
+</AutoVisualizer>
