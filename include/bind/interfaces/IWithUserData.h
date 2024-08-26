@@ -6,7 +6,7 @@ namespace bind {
     class IWithFixedUserData {
         public:
             IWithFixedUserData();
-            ~IWithFixedUserData();
+            virtual ~IWithFixedUserData();
 
             template <typename UserDataType>
             void setUserData(const UserDataType& T);
@@ -21,7 +21,7 @@ namespace bind {
     class IWithUserData {
         public:
             IWithUserData();
-            ~IWithUserData();
+            virtual ~IWithUserData();
 
             template <typename UserDataType>
             void setUserData(UserDataType* T);

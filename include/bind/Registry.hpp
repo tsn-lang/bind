@@ -7,8 +7,8 @@
 
 namespace bind {
     template <typename T>
-    DataType* Registry::Get() {
-        if (!instance) throw Exception("Registry::Get - Registry has not been created");
+    DataType* Registry::GetType() {
+        if (!instance) throw Exception("Registry::GetType - Registry has not been created");
         size_t hash = type_hash<T>();
         
         {
@@ -18,10 +18,10 @@ namespace bind {
         }
 
         if constexpr (std::is_pointer_v<T>) {
-            DataType* tp = Get<std::remove_pointer_t<T>>();
+            DataType* tp = GetType<std::remove_pointer_t<T>>();
             if (!tp) {
                 throw Exception(String::Format(
-                    "Registry::Get - Could not automatically register pointer type, base type '%s' has not been registered",
+                    "Registry::GetType - Could not automatically register pointer type, base type '%s' has not been registered",
                     type_name<std::remove_pointer_t<T>>()
                 ));
             }
@@ -32,10 +32,10 @@ namespace bind {
         }
         
         if constexpr (std::is_reference_v<T>) {
-            DataType* tp = Get<std::remove_reference_t<T>>();
+            DataType* tp = GetType<std::remove_reference_t<T>>();
             if (!tp) {
                 throw Exception(String::Format(
-                    "Registry::Get - Could not automatically register pointer type, base type '%s' has not been registered",
+                    "Registry::GetType - Could not automatically register pointer type, base type '%s' has not been registered",
                     type_name<std::remove_reference_t<T>>()
                 ));
             }
@@ -68,14 +68,14 @@ namespace bind {
                 return (FunctionType*)ret;
             }
 
-            DataType* retTp = Get<Ret>();
+            DataType* retTp = GetType<Ret>();
             if (!retTp) {
                 l.unlock();
                 throw Exception(String::Format("Registry::Signature - Return type '%s' has not been registered", type_name<Ret>()));
             }
 
             const char* argTpNames[] = { type_name<Args>()... };
-            DataType* argTps[] = { Get<Args>()... };
+            DataType* argTps[] = { GetType<Args>()... };
             u8 argCount = u8(sizeof(argTps) / sizeof(DataType*));
 
             String name = retTp->getName() + "(";
@@ -127,20 +127,20 @@ namespace bind {
                 return (FunctionType*)ret;
             }
 
-            DataType* retTp = Get<Ret>();
+            DataType* retTp = GetType<Ret>();
             if (!retTp) {
                 l.unlock();
                 throw Exception(String::Format("Registry::MethodSignature - Return type '%s' has not been registered", type_name<Ret>()));
             }
 
-            DataType* selfTp = Get<Cls>();
+            DataType* selfTp = GetType<Cls>();
             if (!selfTp) {
                 l.unlock();
                 throw Exception(String::Format("Registry::MethodSignature - Class type '%s' has not been registered", type_name<Ret>()));
             }
 
             const char* argTpNames[] = { type_name<Args>()... };
-            DataType* argTps[] = { Get<Args>()... };
+            DataType* argTps[] = { GetType<Args>()... };
             u32 argCount = sizeof(argTps) / sizeof(DataType*);
 
             String name = retTp->getName() + " " + selfTp->getName() + "::(";

@@ -15,7 +15,17 @@ namespace bind {
     typedef int8_t      i8;
     typedef float       f32;
     typedef double      f64;
-    typedef i32         type_id;
+    typedef u32         AccessFlags;
+
+    constexpr u32 PublicAccess = 0;
+    constexpr u32 FullAccessRights = 0xFFFFFFFF;
+
+    constexpr const char* ConstructorName = "$ctor";
+    constexpr u32 ConstructorNameLen = 5;
+    constexpr const char* DestructorName = "$dtor";
+    constexpr u32 DestructorNameLen = 5;
+    constexpr const char* CastOperatorName = "$cast";
+    constexpr u32 CastOperatorNameLen = 5;
 
     struct type_meta {
         unsigned size : 16;

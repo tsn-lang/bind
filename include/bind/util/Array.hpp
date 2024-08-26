@@ -10,7 +10,7 @@ namespace bind {
     Array<T>::Array(std::initializer_list<T> list) {
         m_size = (u32)list.size();
         m_capacity = m_size;
-        m_data = new u8[sizeof(T) * m_size];
+        m_data = (T*)new u8[sizeof(T) * m_size];
 
         u32 i = 0;
         for (auto& ele : list) {
