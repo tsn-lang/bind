@@ -5,6 +5,7 @@ namespace bind {
     using namespace utils;
     
     typedef u32 AccessFlags;
+    typedef u64 symbol_id;
 
     constexpr u32 PublicAccess = 0;
     constexpr u32 FullAccessRights = 0xFFFFFFFF;

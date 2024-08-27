@@ -4,7 +4,7 @@
 #include <bind/AliasType.h>
 #include <bind/PointerType.h>
 #include <bind/Function.h>
-#include <bind/Value.h>
+#include <bind/ValuePointer.h>
 #include <bind/Namespace.hpp>
 #include <bind/Registry.hpp>
 #include <bind/util/ObjectTypeBuilder.hpp>
@@ -40,7 +40,7 @@ namespace bind {
     extend();
 
     template <typename T>
-    Value* global(const String& name, T* val);
+    ValuePointer* global(const String& name, T* val);
 
     template <typename Ret, typename... Args>
     Function* function(const String& name, Ret (*fn)(Args...));

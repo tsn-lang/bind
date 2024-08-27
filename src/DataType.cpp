@@ -32,14 +32,14 @@ namespace bind {
 
     DataType::DataType(const String& name, Namespace* ns)
         : ISymbol(name, ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
-          m_ownNamespace(new Namespace(ns, name))
+          m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
     {
         memset(&m_info, 0, sizeof(type_meta));
     }
 
     DataType::DataType(const String& name, const type_meta& meta, Namespace* ns)
         : ISymbol(name, ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
-          m_info(meta), m_ownNamespace(new Namespace(ns, name))
+          m_info(meta), m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
     {
     }
 
@@ -305,7 +305,7 @@ namespace bind {
 
     bool DataType::isEqualTo(DataType* to) const {
         if (!to) return false;
-        return getEffectiveType()->getSymbolHash() == to->getEffectiveType()->getSymbolHash();
+        return getEffectiveType()->getSymbolId() == to->getEffectiveType()->getSymbolId();
     }
 
     bool DataType::isConstructableWith(const Array<DataType*>& args, AccessFlags accessMask, bool strict) const {
@@ -321,5 +321,13 @@ namespace bind {
     DataType* DataType::getEffectiveType() const {
         if (m_info.is_alias == 0) return const_cast<DataType*>(this);
         return ((AliasType*)this)->getBaseType();
+    }
+
+    PointerType* DataType::getPointerType() {
+        if (m_pointerToSelf) return m_pointerToSelf;
+
+        m_pointerToSelf = new PointerType(this);
+        Registry::Add(m_pointerToSelf);
+        return m_pointerToSelf;
     }
 };

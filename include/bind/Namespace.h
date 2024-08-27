@@ -40,7 +40,7 @@ namespace bind {
             extend();
 
             template <typename T>
-            Value* value(const String& name, T* val);
+            ValuePointer* value(const String& name, T* val);
 
             template <typename Ret, typename... Args>
             Function* function(const String& name, Ret (*fn)(Args...));

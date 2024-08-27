@@ -26,8 +26,8 @@ namespace bind {
                 ));
             }
 
-            PointerType* pt = new PointerType(tp);
-            Add(pt, hash);
+            PointerType* pt = tp->getPointerType();
+            instance->m_hostTypeMap.insert(std::pair<size_t, DataType*>(hash, pt));
             return pt;
         }
         
@@ -40,8 +40,8 @@ namespace bind {
                 ));
             }
 
-            PointerType* pt = new PointerType(tp);
-            Add(pt, hash);
+            PointerType* pt = tp->getPointerType();
+            instance->m_hostTypeMap.insert(std::pair<size_t, DataType*>(hash, pt));
             return pt;
         }
         

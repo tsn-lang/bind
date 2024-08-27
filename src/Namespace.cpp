@@ -28,7 +28,7 @@ namespace bind {
     }
 
     ISymbol* Namespace::findSymbol(const String& symbolName) const {
-        auto it = m_symbolMap.find(ISymbol::Hash(symbolName));
+        auto it = m_symbolMap.find(ISymbol::genSymbolID(symbolName));
         if (it != m_symbolMap.end()) return it->second;
 
         return nullptr;

@@ -20,18 +20,18 @@ namespace bind {
             const String& getName() const;
             const String& getSymbolName() const;
             SymbolType getSymbolType() const;
-            u64 getSymbolHash() const;
+            symbol_id getSymbolId() const;
 
             static String genNamespaceSymbolName(Namespace* ns, const String& name);
             static String genFuncSymbolName(Namespace* ns, const String& name, FunctionType* sig);
             static String genTypeSymbolName(Namespace* ns, const String& name);
             static String genValueSymbolName(Namespace* ns, const String& name);
-            static u64 Hash(const String& symName);
+            static symbol_id genSymbolID(const String& symName);
         
         private:
             String m_name;
             String m_symName;
             SymbolType m_type;
-            u64 m_hash;
+            symbol_id m_hash;
     };
 };

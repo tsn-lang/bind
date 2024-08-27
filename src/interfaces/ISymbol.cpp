@@ -6,7 +6,7 @@
 
 namespace bind {
     ISymbol::ISymbol(const String& name, const String& symName, SymbolType type)
-        : m_name(name), m_symName(symName), m_type(type), m_hash(Hash(symName))
+        : m_name(name), m_symName(symName), m_type(type), m_hash(genSymbolID(symName))
     {
     }
 
@@ -22,7 +22,7 @@ namespace bind {
         return m_type;
     }
 
-    u64 ISymbol::getSymbolHash() const {
+    symbol_id ISymbol::getSymbolId() const {
         return m_hash;
     }
 
@@ -67,7 +67,7 @@ namespace bind {
         return ret;
     }
 
-    u64 ISymbol::Hash(const String& symName) {
+    symbol_id ISymbol::genSymbolID(const String& symName) {
         std::hash<std::string> h;
         return h(symName);
     }

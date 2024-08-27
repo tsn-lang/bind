@@ -3,10 +3,10 @@
 namespace bind {
     class DataType;
 
-    class Value : public ISymbol {
+    class ValuePointer : public ISymbol {
         public:
-            Value(const String& name, DataType* type, void* address, Namespace* ns);
-            ~Value();
+            ValuePointer(const String& name, DataType* type, void* address, Namespace* ns);
+            ~ValuePointer();
 
             DataType* getType() const;
             void* getAddress() const;

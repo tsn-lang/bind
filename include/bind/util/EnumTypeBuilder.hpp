@@ -138,7 +138,7 @@ namespace bind {
                 f.can_write = 1;
                 f.is_static = 1;
 
-                Registry::Add(new Value(name, tp, member, m_type->getOwnNamespace()));
+                Registry::Add(new ValuePointer(name, tp, member, m_type->getOwnNamespace()));
                 return addProperty((void*)member, f, tp, name);
             }
         

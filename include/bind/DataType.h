@@ -9,6 +9,7 @@
 
 namespace bind {
     class Function;
+    class PointerType;
 
     class DataType : public IWithFixedUserData<32>, public ISymbol {
         public:
@@ -235,11 +236,17 @@ namespace bind {
              */
             DataType* getEffectiveType() const;
 
+            /**
+             * @brief Get a pointer type that points to this type
+             */
+            PointerType* getPointerType();
+
         protected:
             friend class ITypeBuilder;
 
             type_meta m_info;
             Namespace* m_ownNamespace;
+            PointerType* m_pointerToSelf;
             Array<Property> m_props;
     };
 };

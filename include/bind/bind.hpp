@@ -57,11 +57,11 @@ namespace bind {
     }
 
     template <typename T>
-    Value* global(const String& name, T* val) {
+    ValuePointer* global(const String& name, T* val) {
         DataType* tp = Registry::GetType<T>();
         if (!tp) throw Exception(String::Format("global - Type '%s' has not been registered", type_name<T>()));
 
-        Value v = new Value(name, tp, val, Registry::GlobalNamespace());
+        ValuePointer v = new ValuePointer(name, tp, val, Registry::GlobalNamespace());
         Registry::Add(v);
         return v;
     }
