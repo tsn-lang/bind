@@ -4,6 +4,18 @@
 namespace bind {
     using namespace utils;
     
+    typedef u32 AccessFlags;
+
+    constexpr u32 PublicAccess = 0;
+    constexpr u32 FullAccessRights = 0xFFFFFFFF;
+
+    constexpr const char* ConstructorName = "$ctor";
+    constexpr u32 ConstructorNameLen = 5;
+    constexpr const char* DestructorName = "$dtor";
+    constexpr u32 DestructorNameLen = 5;
+    constexpr const char* CastOperatorName = "$cast";
+    constexpr u32 CastOperatorNameLen = 5;
+
     struct type_meta {
         unsigned size : 16;
         unsigned is_pod : 1;

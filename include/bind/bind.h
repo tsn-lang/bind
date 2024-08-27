@@ -3,6 +3,8 @@
 #include <bind/FunctionType.h>
 #include <bind/AliasType.h>
 #include <bind/PointerType.h>
+#include <bind/Function.h>
+#include <bind/Value.h>
 #include <bind/Namespace.hpp>
 #include <bind/Registry.hpp>
 #include <bind/util/ObjectTypeBuilder.hpp>
@@ -36,6 +38,12 @@ namespace bind {
     template <typename T>
     std::enable_if_t<std::is_enum_v<T>, EnumTypeBuilder<T>>
     extend();
+
+    template <typename T>
+    Value* global(const String& name, T* val);
+
+    template <typename Ret, typename... Args>
+    Function* function(const String& name, Ret (*fn)(Args...));
 
     template <typename T>
     AliasType* alias(const String& name);

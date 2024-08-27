@@ -7,6 +7,9 @@
 namespace bind {
     class DataType;
     class FunctionType;
+    class Function;
+    class Value;
+    class Namespace;
 
     class Registry {
         public:
@@ -15,12 +18,19 @@ namespace bind {
 
             static void Add(DataType* tp);
             static void Add(DataType* tp, size_t nativeHash);
-            static DataType* Get(u64 symHash);
+            static void Add(Function* fn);
+            static void Add(Value* val);
+            static DataType* GetType(u64 symHash);
+            static Function* GetFunc(u64 symHash);
+            static Value* GetValue(u64 symHash);
             static std::shared_lock<std::shared_mutex> ReadLock();
-            static const Array<DataType*>& All();
+            static Array<DataType*> Types();
+            static Array<Function*> Functions();
+            static Array<Value*> Values();
+            static Namespace* GlobalNamespace();
 
             template <typename T>
-            static DataType* Get();
+            static DataType* GetType();
 
             template <typename Ret, typename... Args>
             static FunctionType* Signature();
@@ -37,5 +47,9 @@ namespace bind {
             std::shared_mutex m_mutex;
             std::unordered_map<u64, DataType*> m_typeMap;
             std::unordered_map<size_t, DataType*> m_hostTypeMap;
+            std::unordered_map<u64, Function*> m_funcMap;
+            std::unordered_map<u64, Value*> m_valueMap;
+
+            Namespace* m_global;
     };
 };

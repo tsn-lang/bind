@@ -3,6 +3,7 @@
 #include <bind/util/meta.hpp>
 #include <bind/util/FuncWrap.hpp>
 #include <bind/Registry.hpp>
+#include <bind/Function.h>
 #include <utils/Exception.h>
 #include <utils/Pointer.hpp>
 
@@ -20,11 +21,20 @@ namespace bind {
                 f.can_read = 1;
                 f.is_ctor = 1;
 
+                Function* func = new Function(
+                    ConstructorName,
+                    &_constructor_wrapper<Cls, Args...>,
+                    Registry::Signature<void, Cls*, Args...>(),
+                    m_type->getOwnNamespace()
+                );
+
+                Registry::add(func);
+
                 return addProperty(
-                    Pointer(&_constructor_wrapper<Cls, Args...>),
+                    Pointer(func),
                     f,
-                    Registry::MethodSignature<void, Cls, Args...>(),
-                    "constructor"
+                    func->getSignature(),
+                    ConstructorName
                 );
             }
 
@@ -37,11 +47,20 @@ namespace bind {
                 f.can_read = 1;
                 f.is_dtor = 1;
 
+                Function* func = new Function(
+                    DestructorName,
+                    &_destructor_wrapper<Cls>,
+                    Registry::Signature<void, Cls*>(),
+                    m_type->getOwnNamespace()
+                );
+
+                Registry::add(func);
+
                 return addProperty(
-                    Pointer(&_destructor_wrapper<Cls>),
+                    Pointer(func),
                     f,
-                    Registry::MethodSignature<void, Cls>(),
-                    "destructor"
+                    func->getSignature(),
+                    DestructorName
                 );
             }
 
@@ -51,10 +70,17 @@ namespace bind {
                 f.can_read = 1;
                 f.is_method = 1;
 
-                return addProperty(
-                    Pointer(fn),
-                    f,
+                Function* func = new Function(
+                    name,
+                    fn,
                     Registry::MethodSignature<Ret, Cls, Args...>(),
+                    m_type->getOwnNamespace()
+                );
+
+                return addProperty(
+                    Pointer(func),
+                    f,
+                    func->getSignature(),
                     name
                 );
             }
@@ -65,10 +91,17 @@ namespace bind {
                 f.can_read = 1;
                 f.is_pseudo_method = 1;
 
-                return addProperty(
-                    Pointer(fn),
-                    f,
+                Function* func = new Function(
+                    name,
+                    fn,
                     Registry::Signature<Ret, Cls*, Args...>(),
+                    m_type->getOwnNamespace()
+                );
+
+                return addProperty(
+                    Pointer(func),
+                    f,
+                    func->getSignature(),
                     name
                 );
             }
@@ -80,17 +113,24 @@ namespace bind {
                 f.is_method = 1;
                 f.is_static = 1;
 
-                return addProperty(
-                    Pointer(fn),
-                    f,
+                Function* func = new Function(
+                    name,
+                    fn,
                     Registry::Signature<Ret, Args...>(),
+                    m_type->getOwnNamespace()
+                );
+
+                return addProperty(
+                    Pointer(func),
+                    f,
+                    func->getSignature(),
                     name
                 );
             }
 
             template <typename T>
             DataType::Property& prop(const String& name, T Cls::*member) {
-                DataType* tp = Registry::Get<T>();
+                DataType* tp = Registry::GetType<T>();
                 if (!tp) {
                     throw Exception(String::Format(
                         "ObjectTypeBuilder::prop - Type '%s' for property '%s' of '%s' has not been registered",
@@ -110,7 +150,7 @@ namespace bind {
 
             template <typename T>
             DataType::Property& staticProp(const String& name, T* member) {
-                DataType* tp = Registry::Get<T>();
+                DataType* tp = Registry::GetType<T>();
                 if (!tp) {
                     throw Exception(String::Format(
                         "ObjectTypeBuilder::staticProp - Type '%s' for property '%s' of '%s' has not been registered",
@@ -125,6 +165,7 @@ namespace bind {
                 f.can_write = 1;
                 f.is_static = 1;
 
+                Registry::Add(new Value(name, tp, member, m_type->getOwnNamespace()));
                 return addProperty((void*)member, f, tp, name);
             }
         

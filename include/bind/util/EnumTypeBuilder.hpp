@@ -3,6 +3,7 @@
 #include <bind/util/meta.hpp>
 #include <bind/Registry.hpp>
 #include <bind/EnumType.h>
+#include <bind/Function.h>
 #include <utils/Exception.h>
 #include <utils/Pointer.hpp>
 
@@ -30,11 +31,20 @@ namespace bind {
                 f.can_read = 1;
                 f.is_ctor = 1;
 
-                return addProperty(
-                    Pointer(fn),
-                    f,
+                Function* func = new Function(
+                    ConstructorName,
+                    fn,
                     Registry::Signature<void, Prim*, Args...>(),
-                    "constructor"
+                    m_type->getOwnNamespace()
+                );
+
+                Registry::add(func);
+
+                return addProperty(
+                    Pointer(func),
+                    f,
+                    func->getSignature(),
+                    ConstructorName
                 );
             }
 
@@ -47,11 +57,20 @@ namespace bind {
                 f.can_read = 1;
                 f.is_dtor = 1;
 
-                return addProperty(
-                    Pointer(fn),
-                    f,
+                Function* func = new Function(
+                    DestructorName,
+                    fn,
                     Registry::Signature<void, Prim*>(),
-                    "destructor"
+                    m_type->getOwnNamespace()
+                );
+
+                Registry::add(func);
+
+                return addProperty(
+                    Pointer(func),
+                    f,
+                    func->getSignature(),
+                    DestructorName
                 );
             }
 
@@ -61,10 +80,19 @@ namespace bind {
                 f.can_read = 1;
                 f.is_pseudo_method = 1;
 
-                return addProperty(
-                    Pointer(fn),
-                    f,
+                Function* func = new Function(
+                    name,
+                    fn,
                     Registry::Signature<Ret, Prim*, Args...>(),
+                    m_type->getOwnNamespace()
+                );
+
+                Registry::add(func);
+
+                return addProperty(
+                    Pointer(func),
+                    f,
+                    func->getSignature(),
                     name
                 );
             }
@@ -76,17 +104,26 @@ namespace bind {
                 f.is_method = 1;
                 f.is_static = 1;
 
-                return addProperty(
-                    Pointer(fn),
-                    f,
+                Function* func = new Function(
+                    name,
+                    fn,
                     Registry::Signature<Ret, Args...>(),
+                    m_type->getOwnNamespace()
+                );
+
+                Registry::add(func);
+
+                return addProperty(
+                    Pointer(func),
+                    f,
+                    func->getSignature(),
                     name
                 );
             }
 
             template <typename T>
             DataType::Property& staticProp(const String& name, T* member) {
-                DataType* tp = Registry::Get<T>();
+                DataType* tp = Registry::GetType<T>();
                 if (!tp) {
                     throw Exception(String::Format(
                         "EnumTypeBuilder::staticProp - Type '%s' for property '%s' of '%s' has not been registered",
@@ -101,6 +138,7 @@ namespace bind {
                 f.can_write = 1;
                 f.is_static = 1;
 
+                Registry::Add(new Value(name, tp, member, m_type->getOwnNamespace()));
                 return addProperty((void*)member, f, tp, name);
             }
         
