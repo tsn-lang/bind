@@ -5,6 +5,7 @@
         "type_traits": "cpp",
         "typeindex": "cpp",
         "mutex": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "shared_mutex": "cpp"
     }
 }

@@ -1,6 +1,5 @@
 #include <bind/FunctionType.h>
-#include <bind/util/Array.hpp>
-#include <string.h>
+#include <utils/Array.hpp>
 
 namespace bind {
     FunctionType::Argument::Argument(u8 _index, DataType* _type)

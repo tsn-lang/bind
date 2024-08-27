@@ -1,5 +1,5 @@
 #include <bind/AliasType.h>
-#include <bind/util/Array.hpp>
+#include <utils/Array.hpp>
 #include <string.h>
 
 namespace bind {

@@ -1,9 +1,9 @@
 #include <bind/interfaces/ITypeBuilder.h>
-#include <bind/interfaces/IWithUserData.hpp>
-#include <bind/util/Exception.h>
 #include <bind/DataType.h>
 #include <bind/Registry.h>
-#include <bind/util/Array.hpp>
+#include <utils/Array.hpp>
+#include <utils/Exception.h>
+#include <utils/interfaces/IWithUserData.hpp>
 
 namespace bind {
     ITypeBuilder::ITypeBuilder(const String& name, const type_meta& meta, Namespace* ns, size_t nativeHash) {

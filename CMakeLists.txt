@@ -13,6 +13,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(
     bind_include_dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/utils/include
 )
 
 set (all_sources "")
@@ -42,9 +43,12 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include_directories(${bind_include_dirs})
 
-add_library(bind ${all_sources})
+if (NOT TARGET utils)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/utils)
+endif()
 
-add_subdirectory("./test")
+add_library(bind ${all_sources})
+target_link_libraries(bind utils)
 
 if (CMAKE_VERSION VERSION_GREATER 3.7.8)
     if (MSVC_IDE)

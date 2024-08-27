@@ -1,7 +1,5 @@
 #include <bind/PointerType.h>
-#include <bind/util/Array.hpp>
 #include <bind/util/meta.hpp>
-#include <string.h>
 
 namespace bind {
     PointerType::PointerType(DataType* pointsTo)

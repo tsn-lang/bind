@@ -1,6 +1,6 @@
 #pragma once
 #include <bind/types.h>
-#include <bind/util/Array.h>
+#include <utils/Array.h>
 #include <shared_mutex>
 #include <unordered_map>
 

@@ -1,9 +1,9 @@
 #pragma once
 #include <bind/Registry.h>
 #include <bind/util/meta.hpp>
-#include <bind/util/Exception.h>
 #include <bind/PointerType.h>
 #include <bind/FunctionType.h>
+#include <utils/Exception.h>
 
 namespace bind {
     template <typename T>

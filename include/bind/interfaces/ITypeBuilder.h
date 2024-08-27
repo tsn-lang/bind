@@ -1,8 +1,8 @@
 #pragma once
 #include <bind/types.h>
-#include <bind/util/String.h>
 #include <bind/DataType.h>
 #include <bind/EnumType.h>
+#include <utils/String.h>
 
 namespace bind {
     class Namespace;

@@ -1,6 +1,6 @@
 #include <bind/DataType.h>
-#include <bind/interfaces/IWithUserData.hpp>
-#include <bind/util/Array.hpp>
+#include <utils/interfaces/IWithUserData.hpp>
+#include <utils/Array.hpp>
 #include <string.h>
 
 namespace bind {

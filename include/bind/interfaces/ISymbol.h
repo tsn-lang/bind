@@ -1,5 +1,6 @@
 #pragma once
-#include <bind/util/String.h>
+#include <bind/types.h>
+#include <utils/String.h>
 
 namespace bind {
     class Namespace;

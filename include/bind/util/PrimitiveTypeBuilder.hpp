@@ -1,9 +1,9 @@
 #pragma once
 #include <bind/interfaces/ITypeBuilder.h>
 #include <bind/util/meta.hpp>
-#include <bind/util/Exception.h>
 #include <bind/Registry.hpp>
-#include <bind/util/Pointer.hpp>
+#include <utils/Exception.h>
+#include <utils/Pointer.hpp>
 
 namespace bind {
     template <typename Prim>

@@ -1,10 +1,10 @@
 #pragma once
-#include <bind/util/String.h>
-#include <bind/interfaces/IWithUserData.h>
 #include <bind/interfaces/ISymbol.h>
 #include <bind/util/ObjectTypeBuilder.hpp>
 #include <bind/util/PrimitiveTypeBuilder.hpp>
 #include <bind/util/EnumTypeBuilder.hpp>
+#include <utils/String.h>
+#include <utils/interfaces/IWithUserData.h>
 #include <unordered_map>
 
 namespace bind {

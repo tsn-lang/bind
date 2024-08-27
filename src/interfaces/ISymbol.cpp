@@ -1,7 +1,7 @@
 #include <bind/interfaces/ISymbol.h>
 #include <bind/Namespace.h>
 #include <bind/FunctionType.h>
-#include <bind/util/Array.hpp>
+#include <utils/Array.hpp>
 #include <unordered_map>
 
 namespace bind {

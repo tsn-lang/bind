@@ -1,7 +1,7 @@
 #include <bind/Registry.h>
 #include <bind/DataType.h>
-#include <bind/util/Array.hpp>
-#include <bind/util/Exception.h>
+#include <utils/Array.hpp>
+#include <utils/Exception.h>
 #include <mutex>
 
 namespace bind {

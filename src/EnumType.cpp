@@ -1,7 +1,7 @@
 #include <bind/EnumType.h>
 #include <bind/util/meta.hpp>
-#include <bind/util/Array.hpp>
-#include <bind/util/Exception.h>
+#include <utils/Array.hpp>
+#include <utils/Exception.h>
 
 namespace bind {
     type_meta enum_meta(u8 bits) {

@@ -5,12 +5,12 @@
 #include <bind/PointerType.h>
 #include <bind/Namespace.hpp>
 #include <bind/Registry.hpp>
-#include <bind/util/Array.hpp>
-#include <bind/util/Exception.h>
 #include <bind/util/ObjectTypeBuilder.hpp>
 #include <bind/util/PrimitiveTypeBuilder.hpp>
 #include <bind/util/EnumTypeBuilder.hpp>
-#include <bind/interfaces/IWithUserData.hpp>
+#include <utils/Array.hpp>
+#include <utils/Exception.h>
+#include <utils/interfaces/IWithUserData.hpp>
 
 namespace bind {
     template <typename T>

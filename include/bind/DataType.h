@@ -1,10 +1,10 @@
 #pragma once
 #include <bind/types.h>
-#include <bind/interfaces/IWithUserData.h>
 #include <bind/interfaces/ISymbol.h>
-#include <bind/util/String.h>
-#include <bind/util/Array.h>
-#include <bind/util/Pointer.h>
+#include <utils/interfaces/IWithUserData.h>
+#include <utils/String.h>
+#include <utils/Array.h>
+#include <utils/Pointer.h>
 
 namespace bind {
     class DataType : public IWithFixedUserData<32>, public ISymbol {
