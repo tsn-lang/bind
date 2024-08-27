@@ -21,7 +21,7 @@ namespace bind {
                     unsigned is_pseudo_method : 1;
                     unsigned is_ctor : 1;
                     unsigned is_dtor : 1;
-                    unsigned __pad0 : 25;
+                    unsigned __pad0 : 1;
                 };
 
                 Property(i32 offset, Flags flags, DataType* type, const String& name, AccessFlags accessFlags = PublicAccess);
