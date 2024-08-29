@@ -68,6 +68,7 @@ namespace bind {
 
             DataType(const String& name, Namespace* ns);
             DataType(const String& name, const type_meta& meta, Namespace* ns);
+            DataType(const String& name, const String& fullName, const type_meta& meta, Namespace* ns);
             virtual ~DataType();
 
             /**

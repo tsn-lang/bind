@@ -42,7 +42,7 @@ namespace bind {
         std::unique_lock l(instance->m_mutex);
         auto it = instance->m_typeMap.find(tp->getSymbolId());
         if (it != instance->m_typeMap.end()) {
-            throw Exception(String::Format("Registry::Add - Type '%s' already registered", tp->getName().c_str()));
+            throw Exception(String::Format("Registry::Add - Type '%s' already registered", tp->getFullName().c_str()));
         }
 
         instance->m_typeMap.insert(std::pair<u64, DataType*>(tp->getSymbolId(), tp));
@@ -54,7 +54,7 @@ namespace bind {
         std::unique_lock l(instance->m_mutex);
         auto it = instance->m_typeMap.find(tp->getSymbolId());
         if (it != instance->m_typeMap.end()) {
-            throw Exception(String::Format("Registry::Add - Type '%s' already registered", tp->getName().c_str()));
+            throw Exception(String::Format("Registry::Add - Type '%s' already registered", tp->getFullName().c_str()));
         }
 
         instance->m_typeMap.insert(std::pair<u64, DataType*>(tp->getSymbolId(), tp));
@@ -67,7 +67,7 @@ namespace bind {
         std::unique_lock l(instance->m_mutex);
         auto it = instance->m_typeMap.find(fn->getSymbolId());
         if (it != instance->m_typeMap.end()) {
-            throw Exception(String::Format("Registry::Add - Function '%s' already registered", fn->getName().c_str()));
+            throw Exception(String::Format("Registry::Add - Function '%s' already registered", fn->getFullName().c_str()));
         }
 
         instance->m_funcMap.insert(std::pair<u64, Function*>(fn->getSymbolId(), fn));
@@ -79,37 +79,37 @@ namespace bind {
         std::unique_lock l(instance->m_mutex);
         auto it = instance->m_typeMap.find(val->getSymbolId());
         if (it != instance->m_typeMap.end()) {
-            throw Exception(String::Format("Registry::Add - Function '%s' already registered", val->getName().c_str()));
+            throw Exception(String::Format("Registry::Add - Function '%s' already registered", val->getFullName().c_str()));
         }
 
         instance->m_valueMap.insert(std::pair<u64, ValuePointer*>(val->getSymbolId(), val));
     }
 
-    DataType* Registry::GetType(u64 symHash) {
+    DataType* Registry::GetType(symbol_id id) {
         if (!instance) throw Exception("Registry::GetType - Registry has not been created");
         std::shared_lock l(instance->m_mutex);
 
-        auto it = instance->m_typeMap.find(symHash);
+        auto it = instance->m_typeMap.find(id);
         if (it != instance->m_typeMap.end()) return it->second;
 
         return nullptr;
     }
 
-    Function* Registry::GetFunc(u64 symHash) {
+    Function* Registry::GetFunc(symbol_id id) {
         if (!instance) throw Exception("Registry::GetFunc - Registry has not been created");
         std::shared_lock l(instance->m_mutex);
 
-        auto it = instance->m_funcMap.find(symHash);
+        auto it = instance->m_funcMap.find(id);
         if (it != instance->m_funcMap.end()) return it->second;
 
         return nullptr;
     }
 
-    ValuePointer* Registry::GetValue(u64 symHash) {
+    ValuePointer* Registry::GetValue(symbol_id id) {
         if (!instance) throw Exception("Registry::GetValue - Registry has not been created");
         std::shared_lock l(instance->m_mutex);
 
-        auto it = instance->m_valueMap.find(symHash);
+        auto it = instance->m_valueMap.find(id);
         if (it != instance->m_valueMap.end()) return it->second;
 
         return nullptr;

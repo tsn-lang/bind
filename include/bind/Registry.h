@@ -20,9 +20,9 @@ namespace bind {
             static void Add(DataType* tp, size_t nativeHash);
             static void Add(Function* fn);
             static void Add(ValuePointer* val);
-            static DataType* GetType(u64 symHash);
-            static Function* GetFunc(u64 symHash);
-            static ValuePointer* GetValue(u64 symHash);
+            static DataType* GetType(symbol_id id);
+            static Function* GetFunc(symbol_id id);
+            static ValuePointer* GetValue(symbol_id id);
             static std::shared_lock<std::shared_mutex> ReadLock();
             static Array<DataType*> Types();
             static Array<Function*> Functions();

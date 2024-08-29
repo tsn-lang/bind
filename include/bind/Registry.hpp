@@ -78,7 +78,7 @@ namespace bind {
             DataType* argTps[] = { GetType<Args>()... };
             u8 argCount = u8(sizeof(argTps) / sizeof(DataType*));
 
-            String name = retTp->getName() + "(";
+            String name = retTp->getFullName() + "(";
             
             for (u8 i = 0;i < argCount;i++) {
                 if (!argTps[i]) {
@@ -88,7 +88,7 @@ namespace bind {
                 }
                 
                 if (i > 0) name += ",";
-                name += argTps[i]->getName();
+                name += argTps[i]->getFullName();
             }
 
             name += ")";
@@ -143,7 +143,7 @@ namespace bind {
             DataType* argTps[] = { GetType<Args>()... };
             u32 argCount = sizeof(argTps) / sizeof(DataType*);
 
-            String name = retTp->getName() + " " + selfTp->getName() + "::(";
+            String name = retTp->getFullName() + " " + selfTp->getFullName() + "::(";
             for (u8 i = 0;i < argCount;i++) {
                 if (!argTps[i]) {
                     delete sig;
@@ -152,7 +152,7 @@ namespace bind {
                 }
 
                 if (i > 0) name += ",";
-                name += argTps[i]->getName();
+                name += argTps[i]->getFullName();
             }
             
             name += ")";

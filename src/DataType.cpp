@@ -31,14 +31,20 @@ namespace bind {
     }
 
     DataType::DataType(const String& name, Namespace* ns)
-        : ISymbol(name, ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
+        : ISymbol(name, ISymbol::genFullSymbolName(ns, name), ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
           m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
     {
         memset(&m_info, 0, sizeof(type_meta));
     }
 
     DataType::DataType(const String& name, const type_meta& meta, Namespace* ns)
-        : ISymbol(name, ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
+        : ISymbol(name, ISymbol::genFullSymbolName(ns, name), ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
+          m_info(meta), m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
+    {
+    }
+
+    DataType::DataType(const String& name, const String& fullName, const type_meta& meta, Namespace* ns)
+        : ISymbol(name, fullName, ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
           m_info(meta), m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
     {
     }

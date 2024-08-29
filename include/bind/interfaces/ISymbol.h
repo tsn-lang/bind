@@ -15,13 +15,15 @@ namespace bind {
 
     class ISymbol {
         public:
-            ISymbol(const String& name, const String& symName, SymbolType type);
+            ISymbol(const String& name, const String& fullName, const String& symName, SymbolType type);
 
             const String& getName() const;
+            const String& getFullName() const;
             const String& getSymbolName() const;
             SymbolType getSymbolType() const;
             symbol_id getSymbolId() const;
 
+            static String genFullSymbolName(Namespace* ns, const String& name);
             static String genNamespaceSymbolName(Namespace* ns, const String& name);
             static String genFuncSymbolName(Namespace* ns, const String& name, FunctionType* sig);
             static String genTypeSymbolName(Namespace* ns, const String& name);
@@ -30,6 +32,7 @@ namespace bind {
         
         private:
             String m_name;
+            String m_fullName;
             String m_symName;
             SymbolType m_type;
             symbol_id m_hash;

@@ -5,11 +5,28 @@
 
 namespace bind {
     type_meta enum_meta(u8 bits) {
+        type_meta m;
         switch (bits) {
-            case 8: return meta<u8>();
-            case 16: return meta<u16>();
-            case 32: return meta<u32>();
-            case 64: return meta<u64>();
+            case 8: {
+                m = meta<u8>();
+                m.is_enum = 1;
+                return m;
+            }
+            case 16: {
+                m = meta<u16>();
+                m.is_enum = 1;
+                return m;
+            }
+            case 32: {
+                m = meta<u32>();
+                m.is_enum = 1;
+                return m;
+            }
+            case 64: {
+                m = meta<u64>();
+                m.is_enum = 1;
+                return m;
+            }
         }
 
         throw Exception("EnumType - Invalid size. Should be 8, 16, 32, or 64");

@@ -2,7 +2,7 @@
 
 namespace bind {
     ValuePointer::ValuePointer(const String& name, DataType* type, void* address, Namespace* ns)
-        : ISymbol(name, ISymbol::genValueSymbolName(ns, name), SymbolType::Value),
+        : ISymbol(name, ISymbol::genFullSymbolName(ns, name), ISymbol::genValueSymbolName(ns, name), SymbolType::Value),
           m_type(type), m_address(address)
     {
     }

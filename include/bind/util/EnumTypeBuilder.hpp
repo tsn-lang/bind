@@ -50,7 +50,7 @@ namespace bind {
 
             DataType::Property& dtor(void (*fn)(Prim*)) {
                 if (m_hasDtor) {
-                    throw Exception(String::Format("EnumTypeBuilder::dtor - Type '%s' already has a destructor", m_type->getName().c_str()));
+                    throw Exception(String::Format("EnumTypeBuilder::dtor - Type '%s' already has a destructor", m_type->getFullName().c_str()));
                 }
 
                 DataType::Property::Flags f = { 0 };
@@ -129,7 +129,7 @@ namespace bind {
                         "EnumTypeBuilder::staticProp - Type '%s' for property '%s' of '%s' has not been registered",
                         type_name<T>(),
                         name.c_str(),
-                        m_type->getName().c_str()
+                        m_type->getFullName().c_str()
                     ));
                 }
 

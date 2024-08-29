@@ -40,7 +40,7 @@ namespace bind {
 
             DataType::Property& dtor() {
                 if (m_hasDtor) {
-                    throw Exception(String::Format("ObjectTypeBuilder::dtor - Type '%s' already has a destructor", m_type->getName().c_str()));
+                    throw Exception(String::Format("ObjectTypeBuilder::dtor - Type '%s' already has a destructor", m_type->getFullName().c_str()));
                 }
 
                 DataType::Property::Flags f = { 0 };
@@ -136,7 +136,7 @@ namespace bind {
                         "ObjectTypeBuilder::prop - Type '%s' for property '%s' of '%s' has not been registered",
                         type_name<T>(),
                         name.c_str(),
-                        m_type->getName().c_str()
+                        m_type->getFullName().c_str()
                     ));
                 }
 
@@ -156,7 +156,7 @@ namespace bind {
                         "ObjectTypeBuilder::staticProp - Type '%s' for property '%s' of '%s' has not been registered",
                         type_name<T>(),
                         name.c_str(),
-                        m_type->getName().c_str()
+                        m_type->getFullName().c_str()
                     ));
                 }
 
