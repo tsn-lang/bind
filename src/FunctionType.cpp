@@ -2,13 +2,19 @@
 #include <utils/Array.hpp>
 
 namespace bind {
+    type_meta func_meta(const type_meta& m) {
+        type_meta ret = m;
+        ret.is_function = 1;
+        return ret;
+    }
+
     FunctionType::Argument::Argument(u8 _index, DataType* _type)
         : index(_index), type(_type)
     {
     }
 
     FunctionType::FunctionType(const String& name, const type_meta& meta)
-        : DataType(name, meta, nullptr), m_returnType(nullptr), m_thisType(nullptr)
+        : DataType(name, func_meta(meta), nullptr), m_returnType(nullptr), m_thisType(nullptr)
     {
     }
 

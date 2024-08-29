@@ -1,6 +1,7 @@
 #include <bind/interfaces/ISymbol.h>
 #include <bind/Namespace.h>
 #include <bind/FunctionType.h>
+#include <bind/Registry.h>
 #include <utils/Array.hpp>
 #include <unordered_map>
 
@@ -34,7 +35,7 @@ namespace bind {
         String ret;
         if (ns) {
             ret = ns->getSymbolName();
-            ret += "::";
+            if (ret.size() > 0) ret += "::";
         }
 
         ret += name;
@@ -42,10 +43,12 @@ namespace bind {
     }
 
     String ISymbol::genNamespaceSymbolName(Namespace* ns, const String& name) {
+        if (name.size() == 0) return "";
+
         String ret;
         if (ns) {
             ret = ns->getSymbolName();
-            ret += ".";
+            if (ret.size() > 0) ret += ".";
         }
 
         ret += "N";
@@ -56,8 +59,11 @@ namespace bind {
     String ISymbol::genFuncSymbolName(Namespace* ns, const String& name, FunctionType* sig) {
         String ret = sig->getReturnType()->getSymbolName() + "_";
         if (ns) {
-            ret += ns->getSymbolName();
-            ret += ".";
+            const String& n = ns->getSymbolName();
+            if (n.size() > 0) {
+                ret += n;
+                ret += ".";
+            }
         }
 
         ret += "F";
@@ -78,7 +84,7 @@ namespace bind {
         String ret;
         if (ns) {
             ret = ns->getSymbolName();
-            ret += ".";
+            if (ret.size() > 0) ret += ".";
         }
 
         ret += "T";
@@ -90,7 +96,7 @@ namespace bind {
         String ret;
         if (ns) {
             ret = ns->getSymbolName();
-            ret += ".";
+            if (ret.size() > 0) ret += ".";
         }
 
         ret += "V";
@@ -99,6 +105,8 @@ namespace bind {
     }
 
     symbol_id ISymbol::genSymbolID(const String& symName) {
+        if (symName.size() == 0) return 0;
+        
         std::hash<std::string> h;
         return h(symName);
     }

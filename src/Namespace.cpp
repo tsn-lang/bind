@@ -4,12 +4,22 @@
 
 namespace bind {
     Namespace::Namespace(const String& name)
-        : ISymbol(name, ISymbol::genFullSymbolName(Registry::GlobalNamespace(), name), ISymbol::genNamespaceSymbolName(Registry::GlobalNamespace(), name), SymbolType::Namespace)
+        : ISymbol(
+            name,
+            ISymbol::genFullSymbolName(Registry::GlobalNamespace(), name),
+            ISymbol::genNamespaceSymbolName(Registry::GlobalNamespace(), name),
+            SymbolType::Namespace
+        ), m_parent(nullptr)
     {
     }
 
     Namespace::Namespace(Namespace* parent, const String& name)
-        : ISymbol(name, ISymbol::genFullSymbolName(parent, name), ISymbol::genNamespaceSymbolName(parent, name), SymbolType::Namespace)
+        : ISymbol(
+            name,
+            ISymbol::genFullSymbolName(parent, name),
+            ISymbol::genNamespaceSymbolName(parent, name),
+            SymbolType::Namespace
+        ), m_parent(parent)
     {
     }
 
