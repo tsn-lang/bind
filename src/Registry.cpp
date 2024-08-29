@@ -11,7 +11,7 @@ namespace bind {
     Registry* Registry::instance = nullptr;
 
     Registry::Registry() {
-        m_global = new Namespace("");
+        m_global = nullptr;
     }
 
     Registry::~Registry() {
@@ -28,6 +28,7 @@ namespace bind {
     void Registry::Create() {
         if (instance) return;
         instance = new Registry();
+        instance->m_global = new Namespace("");
     }
 
     void Registry::Destroy() {

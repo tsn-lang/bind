@@ -43,9 +43,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include_directories(${bind_include_dirs})
 
-if (NOT TARGET utils)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/utils)
-endif()
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/utils)
 
 add_library(bind ${all_sources})
 target_link_libraries(bind utils)

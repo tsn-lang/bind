@@ -74,9 +74,9 @@ namespace bind {
                 throw Exception(String::Format("Registry::Signature - Return type '%s' has not been registered", type_name<Ret>()));
             }
 
-            const char* argTpNames[] = { type_name<Args>()... };
-            DataType* argTps[] = { GetType<Args>()... };
-            u8 argCount = u8(sizeof(argTps) / sizeof(DataType*));
+            const char* argTpNames[] = { type_name<Args>()..., nullptr };
+            DataType* argTps[] = { GetType<Args>()..., nullptr };
+            u32 argCount = u32(sizeof(argTps) / sizeof(DataType*)) - 1;
 
             String name = retTp->getFullName() + "(";
             
@@ -139,9 +139,9 @@ namespace bind {
                 throw Exception(String::Format("Registry::MethodSignature - Class type '%s' has not been registered", type_name<Ret>()));
             }
 
-            const char* argTpNames[] = { type_name<Args>()... };
-            DataType* argTps[] = { GetType<Args>()... };
-            u32 argCount = sizeof(argTps) / sizeof(DataType*);
+            const char* argTpNames[] = { type_name<Args>()..., nullptr };
+            DataType* argTps[] = { GetType<Args>()..., nullptr };
+            u32 argCount = u32(sizeof(argTps) / sizeof(DataType*)) - 1;
 
             String name = retTp->getFullName() + " " + selfTp->getFullName() + "::(";
             for (u8 i = 0;i < argCount;i++) {

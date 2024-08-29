@@ -1,4 +1,5 @@
 #include <bind/FuncMatch.h>
+#include <utils/Array.hpp>
 
 namespace bind {
     FuncMatch::FuncMatch(const String& _name)
