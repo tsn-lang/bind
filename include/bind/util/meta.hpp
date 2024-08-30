@@ -24,9 +24,9 @@ namespace bind {
         return {
             sz,                                                   // size
             std::is_trivial_v<T> && std::is_standard_layout_v<T>, // is_pod
-            std::is_trivially_constructible_v<T>,                 // is_trivially_constructible
+            __has_trivial_constructor(T),                         // is_trivially_constructible
             std::is_trivially_copyable_v<T>,                      // is_trivially_copyable
-            std::is_trivially_destructible_v<T>,                  // is_trivially_destructible
+            __has_trivial_destructor(T),                          // is_trivially_destructible
             std::is_fundamental_v<T>,                             // is_primitive
             std::is_floating_point_v<T>,                          // is_floating_point
             std::is_integral_v<T>,                                // is_integral

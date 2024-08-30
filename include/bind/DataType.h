@@ -80,7 +80,7 @@ namespace bind {
              * @brief Returns the namespace that contains this type's methods, constructor,
              * destructor, and static properties
              */
-            const Namespace* getOwnNamespace() const;
+            Namespace* getOwnNamespace() const;
 
             /**
              * @brief Returns a reference to this type's array of properties
@@ -143,12 +143,18 @@ namespace bind {
              * @brief Checks if this type is convertible to some data type. A data type
              * is convertible to another data type if one of the following is true:
              * 
-             * - Both this type and the other type are primitives
+             * - Both this type and the other type are primitives or pointers
+             * 
+             * - This type is equal to the other type
              * 
              * - This type has a cast operator override that returns the other type
              * 
              * - The other type has a constructor which takes exactly one parameter,
              *   and that parameter's type is this type
+             * 
+             * - The other type is trivially copyable, and every member property of the
+             * other type has a counterpart on this type which has the same name and has
+             * a type which can be converted to the destination property's type
              * 
              * @return Returns true if this type is convertible to the other type
              */
