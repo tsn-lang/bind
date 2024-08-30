@@ -28,7 +28,7 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
-                Registry::add(func);
+                Registry::Add(func);
 
                 return addProperty(
                     Pointer(func),
@@ -54,7 +54,7 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
-                Registry::add(func);
+                Registry::Add(func);
 
                 return addProperty(
                     Pointer(func),
