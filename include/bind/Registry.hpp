@@ -57,52 +57,52 @@ namespace bind {
         FunctionType* sig = nullptr;
         {
             std::shared_lock l(instance->m_mutex);
-            auto it = instance->m_typeMap.find(hash);
-            if (it != instance->m_typeMap.end()) {
-                DataType* ret = it->second;
-                if (ret->getInfo().is_function == 0) {
-                    l.unlock();
-                    throw Exception("Registry::Signature - Cached signature lookup returned type that is not a function type");
-                }
-
-                return (FunctionType*)ret;
+            auto it = instance->m_hostTypeMap.find(hash);
+            if (it != instance->m_hostTypeMap.end()) {
+                sig = (FunctionType*)it->second;
             }
-
-            DataType* retTp = GetType<Ret>();
-            if (!retTp) {
-                l.unlock();
-                throw Exception(String::Format("Registry::Signature - Return type '%s' has not been registered", type_name<Ret>()));
-            }
-
-            const char* argTpNames[] = { type_name<Args>()..., nullptr };
-            DataType* argTps[] = { GetType<Args>()..., nullptr };
-            u32 argCount = u32(sizeof(argTps) / sizeof(DataType*)) - 1;
-
-            String name = retTp->getFullName() + "(";
-            
-            for (u8 i = 0;i < argCount;i++) {
-                if (!argTps[i]) {
-                    delete sig;
-                    l.unlock();
-                    throw Exception(String::Format("Registry::Signature - Type '%s' of argument %d has not been registered", argTpNames[i], i));
-                }
-                
-                if (i > 0) name += ",";
-                name += argTps[i]->getFullName();
-            }
-
-            name += ")";
-
-            sig = new FunctionType(name, meta<Ret(*)(Args...)>());
-            
-            for (u8 i = 0;i < argCount;i++) {
-                sig->m_args.push(FunctionType::Argument(i, argTps[i]));
-            }
-
-            sig->m_returnType = retTp;
         }
+
+        if (sig) {
+            if (sig->getInfo().is_function == 0) {
+                throw Exception("Registry::Signature - Cached signature lookup returned type that is not a function type");
+            }
+
+            return sig;
+        }
+
+        DataType* retTp = GetType<Ret>();
+        if (!retTp) {
+            throw Exception(String::Format("Registry::Signature - Return type '%s' has not been registered", type_name<Ret>()));
+        }
+
+        const char* argTpNames[] = { type_name<Args>()..., nullptr };
+        DataType* argTps[] = { GetType<Args>()..., nullptr };
+        u32 argCount = u32(sizeof(argTps) / sizeof(DataType*)) - 1;
+
+        String name = retTp->getFullName() + "(";
         
-        Add(sig);
+        for (u8 i = 0;i < argCount;i++) {
+            if (!argTps[i]) {
+                delete sig;
+                throw Exception(String::Format("Registry::Signature - Type '%s' of argument %d has not been registered", argTpNames[i], i));
+            }
+            
+            if (i > 0) name += ",";
+            name += argTps[i]->getFullName();
+        }
+
+        name += ")";
+
+        sig = new FunctionType(name, meta<Ret(*)(Args...)>());
+        
+        for (u8 i = 0;i < argCount;i++) {
+            sig->m_args.push(FunctionType::Argument(i, argTps[i]));
+        }
+
+        sig->m_returnType = retTp;
+        
+        Add(sig, hash);
 
         return sig;
     }
@@ -116,54 +116,53 @@ namespace bind {
         FunctionType* sig = nullptr;
         {
             std::shared_lock l(instance->m_mutex);
-            auto it = instance->m_typeMap.find(hash);
-            if (it != instance->m_typeMap.end()) {
-                DataType* ret = it->second;
-                if (ret->getInfo().is_function == 0) {
-                    l.unlock();
-                    throw Exception("Registry::Signature - Cached signature lookup returned type that is not a function type");
-                }
-
-                return (FunctionType*)ret;
-            }
-
-            DataType* retTp = GetType<Ret>();
-            if (!retTp) {
-                l.unlock();
-                throw Exception(String::Format("Registry::MethodSignature - Return type '%s' has not been registered", type_name<Ret>()));
-            }
-
-            DataType* selfTp = GetType<Cls>();
-            if (!selfTp) {
-                l.unlock();
-                throw Exception(String::Format("Registry::MethodSignature - Class type '%s' has not been registered", type_name<Ret>()));
-            }
-
-            const char* argTpNames[] = { type_name<Args>()..., nullptr };
-            DataType* argTps[] = { GetType<Args>()..., nullptr };
-            u32 argCount = u32(sizeof(argTps) / sizeof(DataType*)) - 1;
-
-            String name = retTp->getFullName() + " " + selfTp->getFullName() + "::(";
-            for (u8 i = 0;i < argCount;i++) {
-                if (!argTps[i]) {
-                    delete sig;
-                    l.unlock();
-                    throw Exception(String::Format("Registry::MethodSignature - Type '%s' of argument %d has not been registered", argTpNames[i], i));
-                }
-
-                if (i > 0) name += ",";
-                name += argTps[i]->getFullName();
-            }
-            
-            name += ")";
-
-            sig = new FunctionType(name, meta<Ret(*)(Args...)>());
-            for (u8 i = 0;i < argCount;i++) {
-                sig->m_args.push(FunctionType::Argument(i, argTps[i]));
+            auto it = instance->m_hostTypeMap.find(hash);
+            if (it != instance->m_hostTypeMap.end()) {
+                sig = (FunctionType*)it->second;
             }
         }
+
+        if (sig) {
+            if (sig->getInfo().is_function == 0) {
+                throw Exception("Registry::Signature - Cached signature lookup returned type that is not a function type");
+            }
+
+            return sig;
+        }
+
+        DataType* retTp = GetType<Ret>();
+        if (!retTp) {
+            throw Exception(String::Format("Registry::MethodSignature - Return type '%s' has not been registered", type_name<Ret>()));
+        }
+
+        DataType* selfTp = GetType<Cls>();
+        if (!selfTp) {
+            throw Exception(String::Format("Registry::MethodSignature - Class type '%s' has not been registered", type_name<Ret>()));
+        }
+
+        const char* argTpNames[] = { type_name<Args>()..., nullptr };
+        DataType* argTps[] = { GetType<Args>()..., nullptr };
+        u32 argCount = u32(sizeof(argTps) / sizeof(DataType*)) - 1;
+
+        String name = retTp->getFullName() + " " + selfTp->getFullName() + "::(";
+        for (u8 i = 0;i < argCount;i++) {
+            if (!argTps[i]) {
+                delete sig;
+                throw Exception(String::Format("Registry::MethodSignature - Type '%s' of argument %d has not been registered", argTpNames[i], i));
+            }
+
+            if (i > 0) name += ",";
+            name += argTps[i]->getFullName();
+        }
         
-        Add(sig);
+        name += ")";
+
+        sig = new FunctionType(name, meta<Ret(*)(Args...)>());
+        for (u8 i = 0;i < argCount;i++) {
+            sig->m_args.push(FunctionType::Argument(i, argTps[i]));
+        }
+        
+        Add(sig, hash);
 
         return sig;
     }
