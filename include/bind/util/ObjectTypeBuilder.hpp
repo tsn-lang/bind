@@ -1,5 +1,6 @@
 #pragma once
 #include <bind/interfaces/ITypeBuilder.h>
+#include <bind/interfaces/ICallHandler.h>
 #include <bind/util/meta.hpp>
 #include <bind/util/FuncWrap.hpp>
 #include <bind/Registry.hpp>
@@ -28,6 +29,8 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
+                func->setCallHandler(HostCallHandler::get());
+
                 Registry::Add(func);
 
                 return addProperty(
@@ -54,6 +57,8 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
+                func->setCallHandler(HostCallHandler::get());
+
                 Registry::Add(func);
 
                 return addProperty(
@@ -77,6 +82,8 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
+                func->setCallHandler(HostThisCallHandler::get());
+
                 return addProperty(
                     Pointer(func),
                     f,
@@ -97,6 +104,8 @@ namespace bind {
                     Registry::Signature<Ret, Cls*, Args...>(),
                     m_type->getOwnNamespace()
                 );
+
+                func->setCallHandler(HostCallHandler::get());
 
                 return addProperty(
                     Pointer(func),
@@ -119,6 +128,8 @@ namespace bind {
                     Registry::Signature<Ret, Args...>(),
                     m_type->getOwnNamespace()
                 );
+
+                func->setCallHandler(HostCallHandler::get());
 
                 return addProperty(
                     Pointer(func),

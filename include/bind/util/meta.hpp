@@ -8,6 +8,14 @@
 namespace bind {
     template <typename T>
     inline std::size_t type_hash() {
+        if constexpr (std::is_reference_v<T>) {
+            // `some_type&` has the same hash as `some_type`
+            // just use `some_type*`, since it's effectively
+            // the same as `some_type&` as far as I know, except
+            // that it has a different hash
+            return std::type_index(typeid(std::remove_reference_t<T>*)).hash_code();
+        }
+
         return std::type_index(typeid(T)).hash_code();
     }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <bind/bind.h>
+#include <bind/interfaces/ICallHandler.h>
 
 namespace bind {
     template <typename T>
@@ -75,7 +76,9 @@ namespace bind {
             Registry::GlobalNamespace()
         );
 
-        Registry::add(func);
+        func->setCallHandler(HostCallHandler::get());
+
+        Registry::Add(func);
         return func;
     }
 

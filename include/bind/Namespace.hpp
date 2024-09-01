@@ -79,7 +79,9 @@ namespace bind {
             this
         );
 
-        Registry::add(func);
+        func->setCallHandler(HostCallHandler::get());
+
+        Registry::Add(func);
         return func;
     }
 

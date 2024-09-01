@@ -101,8 +101,10 @@ namespace bind {
         }
 
         sig->m_returnType = retTp;
-        
+
         Add(sig, hash);
+
+        sig->initCallInterface(FFI_DEFAULT_ABI);
 
         return sig;
     }
@@ -157,12 +159,24 @@ namespace bind {
         
         name += ")";
 
-        sig = new FunctionType(name, meta<Ret(*)(Args...)>());
+        sig = new FunctionType(name, meta<Ret(Cls::*)(Args...)>());
         for (u8 i = 0;i < argCount;i++) {
             sig->m_args.push(FunctionType::Argument(i, argTps[i]));
         }
         
+        sig->m_returnType = retTp;
+        sig->m_thisType = selfTp;
+        sig->m_wrapperAddress = &_method_wrapper<Cls, Ret, Args...>;
+        
         Add(sig, hash);
+
+        #if defined(X86_WIN64)
+            sig->initCallInterface(FFI_DEFAULT_ABI);
+        #elif defined(X86_64) || (defined (__x86_64__) && defined (X86_DARWIN))
+            sig->initCallInterface(FFI_DEFAULT_ABI);
+        #elif defined(X86_WIN32)
+            sig->initCallInterface(FFI_THISCALL);
+        #endif
 
         return sig;
     }

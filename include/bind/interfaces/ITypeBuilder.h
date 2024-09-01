@@ -32,6 +32,7 @@ namespace bind {
 
         protected:
             EnumType::Field& _addEnumValue(const String& name, u64 value);
+            void updateFFI();
 
             DataType* m_type;
     };

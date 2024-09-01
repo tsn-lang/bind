@@ -7,6 +7,9 @@
 #include <utils/Array.h>
 #include <utils/Pointer.h>
 
+#define FFI_STATIC_BUILD
+#include <ffi.h>
+
 namespace bind {
     class Function;
     class PointerType;
@@ -66,7 +69,6 @@ namespace bind {
                 String name;
             };
 
-            DataType(const String& name, Namespace* ns);
             DataType(const String& name, const type_meta& meta, Namespace* ns);
             DataType(const String& name, const String& fullName, const type_meta& meta, Namespace* ns);
             virtual ~DataType();
@@ -248,6 +250,11 @@ namespace bind {
              */
             PointerType* getPointerType();
 
+            /**
+             * @brief Gets a pointer to this type's ffi_type, for use with libffi
+             */
+            ffi_type* getFFI();
+
         protected:
             friend class ITypeBuilder;
 
@@ -255,5 +262,7 @@ namespace bind {
             Namespace* m_ownNamespace;
             PointerType* m_pointerToSelf;
             Array<Property> m_props;
+            ffi_type m_ffi;
+            Array<ffi_type*> m_ffiElems;
     };
 };

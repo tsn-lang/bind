@@ -1,4 +1,5 @@
 #include <bind/FunctionType.h>
+#include <utils/Exception.h>
 #include <utils/Array.hpp>
 
 namespace bind {
@@ -31,5 +32,31 @@ namespace bind {
 
     DataType* FunctionType::getThisType() const {
         return m_thisType;
+    }
+    
+    const Pointer& FunctionType::getWrapperAddress() const {
+        return m_wrapperAddress;
+    }
+    
+    ffi_cif* FunctionType::getCif() {
+        return &m_cif;
+    }
+
+    void FunctionType::call(const Pointer& funcPtr, void* retDest, void** args) {
+        ffi_call(&m_cif, (void(*)())funcPtr.get(), retDest, args);
+    }
+
+    void FunctionType::initCallInterface(ffi_abi abi) {
+        m_ffiArgTypes.reserve(m_args.size() + 1);
+        if (m_thisType) {
+            // actually calling a method wrapper, not the method directly
+            m_ffiArgTypes.push(&ffi_type_pointer); // function pointer
+            m_ffiArgTypes.push(&ffi_type_pointer); // 'this' pointer
+        }
+        m_ffiArgTypes.append(m_args.map([](const Argument& a) { return a.type->getFFI(); }));
+
+        if (ffi_prep_cif(&m_cif, abi, m_ffiArgTypes.size(), m_returnType->getFFI(), m_ffiArgTypes.data()) != FFI_OK) {
+            throw Exception("FunctionType::initCallInterface - Failed to prep FFI call interface");
+        }
     }
 };

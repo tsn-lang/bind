@@ -40,23 +40,78 @@ namespace bind {
     {
     }
 
-    DataType::DataType(const String& name, Namespace* ns)
-        : ISymbol(name, ISymbol::genFullSymbolName(ns, name), ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
-          m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
-    {
-        memset(&m_info, 0, sizeof(type_meta));
-    }
-
     DataType::DataType(const String& name, const type_meta& meta, Namespace* ns)
         : ISymbol(name, ISymbol::genFullSymbolName(ns, name), ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
           m_info(meta), m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
     {
+        if (meta.is_primitive) {
+            if (meta.is_integral) {
+                if (meta.is_unsigned) {
+                    switch (meta.size) {
+                        case 1: { m_ffi = ffi_type_uint8; break; }
+                        case 2: { m_ffi = ffi_type_uint16; break; }
+                        case 4: { m_ffi = ffi_type_uint32; break; }
+                        case 8: { m_ffi = ffi_type_uint64; break; }
+                    }
+                } else {
+                    switch (meta.size) {
+                        case 1: { m_ffi = ffi_type_sint8; break; }
+                        case 2: { m_ffi = ffi_type_sint16; break; }
+                        case 4: { m_ffi = ffi_type_sint32; break; }
+                        case 8: { m_ffi = ffi_type_sint64; break; }
+                    }
+                }
+            } else if (meta.is_floating_point) {
+                if (meta.size == sizeof(f32)) m_ffi = ffi_type_float;
+                else m_ffi = ffi_type_double;
+            }
+        } else if (meta.is_pointer) {
+            m_ffi = ffi_type_pointer;
+        } else if (meta.size == 0) {
+            m_ffi = ffi_type_void;
+        } else {
+            m_ffi.size = meta.size;
+            m_ffi.alignment = 0;
+            m_ffi.type = FFI_TYPE_STRUCT;
+            m_ffiElems.push(nullptr);
+        }
     }
 
     DataType::DataType(const String& name, const String& fullName, const type_meta& meta, Namespace* ns)
         : ISymbol(name, fullName, ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
           m_info(meta), m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
     {
+        if (meta.is_primitive) {
+            if (meta.is_integral) {
+                if (meta.is_unsigned) {
+                    switch (meta.size) {
+                        case 1: { m_ffi = ffi_type_uint8; break; }
+                        case 2: { m_ffi = ffi_type_uint16; break; }
+                        case 4: { m_ffi = ffi_type_uint32; break; }
+                        case 8: { m_ffi = ffi_type_uint64; break; }
+                    }
+                } else {
+                    switch (meta.size) {
+                        case 1: { m_ffi = ffi_type_sint8; break; }
+                        case 2: { m_ffi = ffi_type_sint16; break; }
+                        case 4: { m_ffi = ffi_type_sint32; break; }
+                        case 8: { m_ffi = ffi_type_sint64; break; }
+                    }
+                }
+            } else if (meta.is_floating_point) {
+                if (meta.size == sizeof(f32)) m_ffi = ffi_type_float;
+                else m_ffi = ffi_type_double;
+            }
+        } else if (meta.is_pointer) {
+            m_ffi = ffi_type_pointer;
+        } else if (meta.size == 0) {
+            m_ffi = ffi_type_void;
+        } else {
+            m_ffi.size = meta.size;
+            m_ffi.alignment = 0;
+            m_ffi.type = FFI_TYPE_STRUCT;
+            m_ffiElems.push(nullptr);
+        }
     }
 
     DataType::~DataType() {
@@ -396,5 +451,9 @@ namespace bind {
         m_pointerToSelf = new PointerType(this);
         Registry::Add(m_pointerToSelf);
         return m_pointerToSelf;
+    }
+    
+    ffi_type* DataType::getFFI() {
+        return &m_ffi;
     }
 };

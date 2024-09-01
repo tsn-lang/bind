@@ -26,6 +26,9 @@ namespace bind {
         String name
     ) {
         m_type->m_props.push(DataType::Property(offset, flags, type, name));
+        
+        if (offset >= 0) updateFFI();
+
         return m_type->m_props.last();
     }
 
@@ -43,6 +46,78 @@ namespace bind {
         ((EnumType*)m_type)->m_fields.push({ name, value });
         ((EnumType*)m_type)->m_fieldIndexMap.insert(std::pair<String, u32>(name, ((EnumType*)m_type)->m_fields.size() - 1));
         return ((EnumType*)m_type)->m_fields.last();
+    }
+
+    void ITypeBuilder::updateFFI() {
+        Array<DataType::Property*> orderedProps(m_type->m_props.size());
+        for (u32 i = 0;i < m_type->m_props.size();i++) {
+            auto& p = m_type->m_props[i];
+            if (p.offset == -1) continue;
+            orderedProps.push(&p);
+        }
+        orderedProps.sort([](DataType::Property* a, DataType::Property* b){
+            return a->offset < b->offset;
+        });
+
+        m_type->m_ffiElems.clear();
+
+        u32 expectedNextOffset = 0;
+
+        u32 totalSize = 0;
+        for (u32 i = 0;i < orderedProps.size();i++) {
+            DataType::Property* p = orderedProps[i];
+            if (p->offset == -1) continue;
+
+            if (u32(p->offset) > expectedNextOffset) {
+                u32 paddingAmount = p->offset - expectedNextOffset;
+                totalSize += paddingAmount;
+                while (paddingAmount > 0) {
+                    if (paddingAmount >= sizeof(u64)) {
+                        m_type->m_ffiElems.push(&ffi_type_uint64);
+                        paddingAmount -= sizeof(u64);
+                    } else if (paddingAmount >= sizeof(u32)) {
+                        m_type->m_ffiElems.push(&ffi_type_uint32);
+                        paddingAmount -= sizeof(u32);
+                    } else if (paddingAmount >= sizeof(u16)) {
+                        m_type->m_ffiElems.push(&ffi_type_uint16);
+                        paddingAmount -= sizeof(u16);
+                    } else if (paddingAmount >= sizeof(u8)) {
+                        m_type->m_ffiElems.push(&ffi_type_uint8);
+                        paddingAmount -= sizeof(u8);
+                    }
+                }
+            }
+
+            u16 size = p->type->getInfo().size;
+            totalSize += size;
+            expectedNextOffset = p->offset + size;
+            m_type->m_ffiElems.push(p->type->getFFI());
+        }
+
+        if (m_type->getInfo().size > totalSize) {
+            u32 remainingSize = m_type->getInfo().size - totalSize;
+            while (remainingSize > 0) {
+                if (remainingSize >= sizeof(u64)) {
+                    m_type->m_ffiElems.push(&ffi_type_uint64);
+                    remainingSize -= sizeof(u64);
+                } else if (remainingSize >= sizeof(u32)) {
+                    m_type->m_ffiElems.push(&ffi_type_uint32);
+                    remainingSize -= sizeof(u32);
+                } else if (remainingSize >= sizeof(u16)) {
+                    m_type->m_ffiElems.push(&ffi_type_uint16);
+                    remainingSize -= sizeof(u16);
+                } else if (remainingSize >= sizeof(u8)) {
+                    m_type->m_ffiElems.push(&ffi_type_uint8);
+                    remainingSize -= sizeof(u8);
+                }
+            }
+        }
+
+        m_type->m_ffiElems.push(nullptr);
+        
+        m_type->m_ffi.size = m_type->m_ffi.alignment = 0;
+        m_type->m_ffi.type = FFI_TYPE_STRUCT;
+        m_type->m_ffi.elements = m_type->m_ffiElems.data();
     }
 
     ITypeBuilder::operator DataType*() const {
