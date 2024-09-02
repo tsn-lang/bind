@@ -3,6 +3,8 @@
 #include <bind/FunctionType.h>
 
 namespace bind {
+    ICallHandler::~ICallHandler() {}
+    
     HostCallHandler HostCallHandler::instance = HostCallHandler();
 
     void HostCallHandler::call(Function* target, void* retDest, void** args) {

@@ -13,6 +13,7 @@ namespace bind {
             virtual ~Function();
 
             void setCallHandler(ICallHandler* callHandler);
+            void call(void* retDest, void** args);
 
             FunctionType* getSignature() const;
             ICallHandler* getCallHandler() const;

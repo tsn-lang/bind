@@ -5,6 +5,8 @@ namespace bind {
 
     class ICallHandler {
         public:
+            virtual ~ICallHandler();
+            
             /**
              * @brief Calls a function
              * 
