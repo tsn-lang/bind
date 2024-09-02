@@ -66,6 +66,8 @@ namespace bind {
             } else if (meta.is_floating_point) {
                 if (meta.size == sizeof(f32)) m_ffi = ffi_type_float;
                 else m_ffi = ffi_type_double;
+            } else if (meta.size == 0) {
+                m_ffi = ffi_type_void;
             }
         } else if (meta.is_pointer) {
             m_ffi = ffi_type_pointer;
