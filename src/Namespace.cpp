@@ -27,7 +27,7 @@ namespace bind {
         : ISymbol(
             type->getName(),
             ISymbol::genFullSymbolName(Registry::GlobalNamespace(), type->getName()),
-            ISymbol::genNamespaceSymbolName(Registry::GlobalNamespace(), type->getName()),
+            ISymbol::genTypeSymbolName(Registry::GlobalNamespace(), type->getName()),
             SymbolType::Namespace
         ), m_parent(nullptr), m_forType(type)
     {
@@ -37,7 +37,7 @@ namespace bind {
         : ISymbol(
             type->getName(),
             ISymbol::genFullSymbolName(parent, type->getName()),
-            ISymbol::genNamespaceSymbolName(parent, type->getName()),
+            ISymbol::genTypeSymbolName(parent, type->getName()),
             SymbolType::Namespace
         ), m_parent(parent), m_forType(type)
     {
