@@ -22,7 +22,6 @@ namespace bind {
         for (auto& it : instance->m_funcMap) delete it.second;
         for (auto& it : instance->m_typeMap) delete it.second;
         
-        delete m_global;
         m_global = nullptr;
     }
 
