@@ -14,6 +14,8 @@ namespace bind {
         public:
             Namespace(const String& name);
             Namespace(Namespace* parent, const String& name);
+            Namespace(DataType* type);
+            Namespace(Namespace* parent, DataType* type);
 
             template <typename T>
             std::enable_if_t<std::is_class_v<T>, ObjectTypeBuilder<T>>
@@ -52,11 +54,13 @@ namespace bind {
 
             const String& getName() const;
             Namespace* getParent() const;
+            DataType* getCorrespondingType() const;
             ISymbol* findSymbol(const String& symbolName) const;
         
         protected:
             String m_name;
             Namespace* m_parent;
+            DataType* m_forType;
             std::unordered_map<u64, ISymbol*> m_symbolMap;
     };
 };

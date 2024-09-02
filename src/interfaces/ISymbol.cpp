@@ -51,7 +51,9 @@ namespace bind {
             if (ret.size() > 0) ret += ".";
         }
 
-        ret += "N";
+        if (ns->getCorrespondingType()) ret += "T";
+        else ret += "N";
+        
         ret += name;
         return ret;
     }

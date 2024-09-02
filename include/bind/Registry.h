@@ -20,9 +20,11 @@ namespace bind {
             static void Add(DataType* tp, size_t nativeHash);
             static void Add(Function* fn);
             static void Add(ValuePointer* val);
+            static void Add(Namespace* ns);
             static DataType* GetType(symbol_id id);
             static Function* GetFunc(symbol_id id);
             static ValuePointer* GetValue(symbol_id id);
+            static Namespace* GetNamespace(symbol_id id);
             static std::shared_lock<std::shared_mutex> ReadLock();
             static Array<DataType*> Types();
             static Array<Function*> Functions();
@@ -45,10 +47,11 @@ namespace bind {
             ~Registry();
 
             std::shared_mutex m_mutex;
-            std::unordered_map<u64, DataType*> m_typeMap;
+            std::unordered_map<symbol_id, DataType*> m_typeMap;
             std::unordered_map<size_t, DataType*> m_hostTypeMap;
-            std::unordered_map<u64, Function*> m_funcMap;
-            std::unordered_map<u64, ValuePointer*> m_valueMap;
+            std::unordered_map<symbol_id, Function*> m_funcMap;
+            std::unordered_map<symbol_id, ValuePointer*> m_valueMap;
+            std::unordered_map<symbol_id, Namespace*> m_namespaceMap;
 
             Namespace* m_global;
     };

@@ -42,8 +42,10 @@ namespace bind {
 
     DataType::DataType(const String& name, const type_meta& meta, Namespace* ns)
         : ISymbol(name, ISymbol::genFullSymbolName(ns, name), ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
-          m_info(meta), m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
+          m_info(meta), m_ownNamespace(new Namespace(ns, this)), m_pointerToSelf(nullptr)
     {
+        Registry::Add(m_ownNamespace);
+
         if (meta.is_primitive) {
             if (meta.is_integral) {
                 if (meta.is_unsigned) {
@@ -79,8 +81,10 @@ namespace bind {
 
     DataType::DataType(const String& name, const String& fullName, const type_meta& meta, Namespace* ns)
         : ISymbol(name, fullName, ISymbol::genTypeSymbolName(ns, name), SymbolType::DataType),
-          m_info(meta), m_ownNamespace(new Namespace(ns, name)), m_pointerToSelf(nullptr)
+          m_info(meta), m_ownNamespace(new Namespace(ns, this)), m_pointerToSelf(nullptr)
     {
+        Registry::Add(m_ownNamespace);
+
         if (meta.is_primitive) {
             if (meta.is_integral) {
                 if (meta.is_unsigned) {
@@ -115,8 +119,7 @@ namespace bind {
     }
 
     DataType::~DataType() {
-        delete m_ownNamespace;
-        m_ownNamespace = nullptr;
+        // namespace will be deleted by the registry
     }
 
     const type_meta& DataType::getInfo() const {

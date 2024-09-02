@@ -9,7 +9,7 @@ namespace bind {
             ISymbol::genFullSymbolName(Registry::GlobalNamespace(), name),
             ISymbol::genNamespaceSymbolName(Registry::GlobalNamespace(), name),
             SymbolType::Namespace
-        ), m_parent(nullptr)
+        ), m_parent(nullptr), m_forType(nullptr)
     {
     }
 
@@ -19,7 +19,27 @@ namespace bind {
             ISymbol::genFullSymbolName(parent, name),
             ISymbol::genNamespaceSymbolName(parent, name),
             SymbolType::Namespace
-        ), m_parent(parent)
+        ), m_parent(parent), m_forType(nullptr)
+    {
+    }
+
+    Namespace::Namespace(DataType* type)
+        : ISymbol(
+            type->getName(),
+            ISymbol::genFullSymbolName(Registry::GlobalNamespace(), type->getName()),
+            ISymbol::genNamespaceSymbolName(Registry::GlobalNamespace(), type->getName()),
+            SymbolType::Namespace
+        ), m_parent(nullptr), m_forType(type)
+    {
+    }
+
+    Namespace::Namespace(Namespace* parent, DataType* type)
+        : ISymbol(
+            type->getName(),
+            ISymbol::genFullSymbolName(parent, type->getName()),
+            ISymbol::genNamespaceSymbolName(parent, type->getName()),
+            SymbolType::Namespace
+        ), m_parent(parent), m_forType(type)
     {
     }
 
@@ -35,6 +55,10 @@ namespace bind {
 
     Namespace* Namespace::getParent() const {
         return m_parent;
+    }
+    
+    DataType* Namespace::getCorrespondingType() const {
+        return m_forType;
     }
 
     ISymbol* Namespace::findSymbol(const String& symbolName) const {
