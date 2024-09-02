@@ -119,6 +119,11 @@ namespace bind {
                 );
             }
 
+            template <typename Ret>
+            DataType::Property& castOperator(const String& name, Ret (*fn)(Prim*)) {
+                return method(CastOperatorName, fn);
+            }
+
             template <typename T>
             DataType::Property& staticProp(const String& name, T* member) {
                 DataType* tp = Registry::GetType<T>();
@@ -140,6 +145,7 @@ namespace bind {
                 return addProperty((void*)member, f, tp, name);
             }
         
+
         protected:
             bool m_hasDtor;
     };

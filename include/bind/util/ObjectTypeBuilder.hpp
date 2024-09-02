@@ -139,6 +139,17 @@ namespace bind {
                 );
             }
 
+            template <typename DestTp>
+            std::enable_if_t<std::is_member_function_pointer_v<decltype(&Cls::operator DestTp)>, DataType::Property&>
+            castOperator() {
+                return method(CastOperatorName, &Cls::operator DestTp);
+            }
+            
+            template <typename Ret>
+            DataType::Property& pseudoCastOperator(const String& name, Ret (*fn)(Cls*)) {
+                return pseudoMethod(CastOperatorName, fn);
+            }
+
             template <typename T>
             DataType::Property& prop(const String& name, T Cls::*member) {
                 DataType* tp = Registry::GetType<T>();
