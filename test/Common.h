@@ -32,6 +32,9 @@ struct struct_with_methods {
     void method1(i32 d) {}
     i32 method2(i32 d) { return a + d; }
     i64 method3(i64 d) { return a + d; }
+
+    operator i32() { return a; }
+    operator i64() { return a; }
 };
 
 enum enum_type {

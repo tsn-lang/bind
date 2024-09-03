@@ -541,6 +541,40 @@ void test_findConstructors() {
 }
 
 void test_findConversionOperator() {
+    Registry::Reset();
+    build<i64>("i64");
+    build<i32>("i32");
+    build<i16>("i16");
+    build<void>("void");
+    auto b = build<struct_with_methods>("test");
+    b.castOperator<i32>().accessFlags = 0b0001000; // arbitrary bits
+    b.castOperator<i64>();
+    DataType* tp = b;
+
+    Function* fn;
+    
+    fn = tp->findConversionOperator(Registry::GetType<i32>());
+    REQUIRE(fn != nullptr);
+    REQUIRE(fn->getSignature()->getReturnType()->isEqualTo(Registry::GetType<i32>()));
+    
+    fn = tp->findConversionOperator(Registry::GetType<i32>(), 0b0001000);
+    REQUIRE(fn != nullptr);
+    REQUIRE(fn->getSignature()->getReturnType()->isEqualTo(Registry::GetType<i32>()));
+    
+    fn = tp->findConversionOperator(Registry::GetType<i32>(), 0b1110111);
+    REQUIRE(fn == nullptr);
+    
+    fn = tp->findConversionOperator(Registry::GetType<i64>());
+    REQUIRE(fn != nullptr);
+    REQUIRE(fn->getSignature()->getReturnType()->isEqualTo(Registry::GetType<i64>()));
+    
+    fn = tp->findConversionOperator(Registry::GetType<i64>(), 0b0001000);
+    REQUIRE(fn != nullptr);
+    REQUIRE(fn->getSignature()->getReturnType()->isEqualTo(Registry::GetType<i64>()));
+    
+    fn = tp->findConversionOperator(Registry::GetType<i64>(), 0b1110111);
+    REQUIRE(fn != nullptr);
+    REQUIRE(fn->getSignature()->getReturnType()->isEqualTo(Registry::GetType<i64>()));
 }
 
 TEST_CASE("Test DataType methods", "[bind]") {
