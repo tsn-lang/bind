@@ -10,7 +10,7 @@ namespace bind {
                 u64 value;
             };
 
-            EnumType(const String& name, u8 bits, Namespace* ns);
+            EnumType(const String& name, const type_meta& meta, Namespace* ns);
             ~EnumType();
 
             const Array<Field>& getFields() const;

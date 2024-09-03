@@ -270,7 +270,7 @@ namespace bind {
                         break;
                     }
 
-                    if (strictMatchCount <= 1 && isStrictMatch && singleStrictMatch && !args[a].type->isEquivalentTo(argTypes[a])) {
+                    if (strictMatchCount <= 1 && isStrictMatch && singleStrictMatch && !args[a].type->isEquivalentTo(argTypes[a - 1])) {
                         isStrictMatch = false;
                     }
                 }
@@ -314,6 +314,16 @@ namespace bind {
     bool DataType::isConvertibleTo(DataType* _to, AccessFlags accessMask) const {
         if (!_to) return false;
         DataType* to = _to->getEffectiveType();
+
+        if (to->m_info.size == 0) {
+            if (m_info.size == 0) return true;
+            return false;
+        }
+
+        if (m_info.size == 0) {
+            if (to->m_info.size == 0) return true;
+            return false;
+        }
 
         // all primitives are convertible to each other
         if (m_info.is_primitive && to->m_info.is_primitive) return true;
@@ -381,22 +391,16 @@ namespace bind {
         return true;
     }
 
-    bool DataType::isImplicitlyAssignableTo(DataType* to) const {
-        if (!to) return false;
-        if (m_info.is_primitive && to->m_info.is_primitive) return true;
-
-        return isEquivalentTo(to) && m_info.is_trivially_copyable && to->m_info.is_trivially_copyable;
-    }
-
     bool DataType::isEquivalentTo(DataType* _to) const {
         if (!_to) return false;
+        if (isEqualTo(_to)) return true;
 
         DataType* to = _to->getEffectiveType();
-        if (isEqualTo(to)) return true;
 
         if (
             m_info.size                         != to->m_info.size                          ||
-            m_info.is_pod                       != to->m_info.is_pod                        ||
+            m_info.is_trivial                   != to->m_info.is_trivial                    ||
+            m_info.is_standard_layout           != to->m_info.is_standard_layout            ||
             m_info.is_trivially_constructible   != to->m_info.is_trivially_constructible    ||
             m_info.is_trivially_copyable        != to->m_info.is_trivially_copyable         ||
             m_info.is_trivially_destructible    != to->m_info.is_trivially_destructible     ||
@@ -436,12 +440,7 @@ namespace bind {
     }
 
     bool DataType::isConstructableWith(const Array<DataType*>& args, AccessFlags accessMask, bool strict) const {
-        auto ctors = getEffectiveType()->findMethods(
-            FuncMatch(ConstructorName)
-            .argTps(args, strict)
-            .access(accessMask)
-        );
-
+        auto ctors = getEffectiveType()->findConstructors(args, strict, accessMask);
         return ctors.size() == 1;
     }
 

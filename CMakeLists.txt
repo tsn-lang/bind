@@ -42,6 +42,7 @@ include_directories(${TSN_BIND_INCLUDE_DIR} ${TSN_UTILS_INCLUDE_DIR} ${FFI_INCLU
 add_compile_definitions(-DFFI_STATIC_BUILD=1)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/utils)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/libffi)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 add_library(bind ${all_sources})
 target_link_libraries(bind utils ffi_static)

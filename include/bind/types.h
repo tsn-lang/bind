@@ -19,7 +19,8 @@ namespace bind {
 
     struct type_meta {
         unsigned size : 16;
-        unsigned is_pod : 1;
+        unsigned is_trivial : 1;
+        unsigned is_standard_layout : 1;
         unsigned is_trivially_constructible : 1;
         unsigned is_trivially_copyable : 1;
         unsigned is_trivially_destructible : 1;
@@ -31,6 +32,6 @@ namespace bind {
         unsigned is_pointer : 1;
         unsigned is_alias : 1;
         unsigned is_enum : 1;
-        unsigned __pad0 : 4;
+        unsigned __pad0 : 3;
     };
 };

@@ -31,7 +31,8 @@ namespace bind {
         if constexpr (!std::is_same_v<void, T>) sz = (u16)sizeof(T);
         return {
             sz,                                                   // size
-            std::is_trivial_v<T> && std::is_standard_layout_v<T>, // is_pod
+            std::is_trivial_v<T>,                                 // is_trivial
+            std::is_standard_layout_v<T>,                         // is_standard_layout
             __has_trivial_constructor(T),                         // is_trivially_constructible
             std::is_trivially_copyable_v<T>,                      // is_trivially_copyable
             __has_trivial_destructor(T),                          // is_trivially_destructible

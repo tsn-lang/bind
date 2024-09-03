@@ -4,36 +4,18 @@
 #include <utils/Exception.h>
 
 namespace bind {
-    type_meta enum_meta(u8 bits) {
-        type_meta m;
-        switch (bits) {
-            case 8: {
-                m = meta<u8>();
-                m.is_enum = 1;
-                return m;
-            }
-            case 16: {
-                m = meta<u16>();
-                m.is_enum = 1;
-                return m;
-            }
-            case 32: {
-                m = meta<u32>();
-                m.is_enum = 1;
-                return m;
-            }
-            case 64: {
-                m = meta<u64>();
-                m.is_enum = 1;
-                return m;
-            }
+    type_meta enum_meta(const type_meta& in) {
+        if (!in.is_primitive || !in.is_integral) {
+            throw Exception("EnumType - Should be a primitive / integral type");
         }
 
-        throw Exception("EnumType - Invalid size. Should be 8, 16, 32, or 64");
+        type_meta m = in;
+        m.is_enum = 1;
+        return m;
     }
 
-    EnumType::EnumType(const String& name, u8 bits, Namespace* ns)
-        : DataType(name, enum_meta(bits), ns)
+    EnumType::EnumType(const String& name, const type_meta& meta, Namespace* ns)
+        : DataType(name, enum_meta(meta), ns)
     {
     }
 

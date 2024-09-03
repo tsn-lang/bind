@@ -6,6 +6,7 @@ namespace bind {
     type_meta func_meta(const type_meta& m) {
         type_meta ret = m;
         ret.is_function = 1;
+        ret.is_pointer = 1;
         return ret;
     }
 

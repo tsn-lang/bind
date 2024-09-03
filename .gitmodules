@@ -4,3 +4,6 @@
 [submodule "deps/libffi"]
 	path = deps/libffi
 	url = https://github.com/tsn-lang/libffi.git
+[submodule "test/Catch2"]
+	path = test/Catch2
+	url = https://github.com/catchorg/Catch2.git

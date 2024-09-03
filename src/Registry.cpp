@@ -32,6 +32,12 @@ namespace bind {
         
         Registry::Add(instance->m_global);
     }
+    
+    void Registry::Reset() {
+        if (!instance) throw Exception("Registry::Reset - Registry has not been created");
+        Registry::Destroy();
+        Registry::Create();
+    }
 
     void Registry::Destroy() {
         if (!instance) return;

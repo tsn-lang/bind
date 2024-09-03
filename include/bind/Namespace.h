@@ -52,13 +52,11 @@ namespace bind {
 
             AliasType* alias(const String& name, DataType* aliasOf);
 
-            const String& getName() const;
             Namespace* getParent() const;
             DataType* getCorrespondingType() const;
             ISymbol* findSymbol(const String& symbolName) const;
         
         protected:
-            String m_name;
             Namespace* m_parent;
             DataType* m_forType;
             std::unordered_map<u64, ISymbol*> m_symbolMap;

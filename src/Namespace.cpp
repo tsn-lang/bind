@@ -49,10 +49,6 @@ namespace bind {
         return tp;
     }
 
-    const String& Namespace::getName() const {
-        return m_name;
-    }
-
     Namespace* Namespace::getParent() const {
         return m_parent;
     }

@@ -13,7 +13,7 @@ namespace bind {
     class EnumTypeBuilder : public ITypeBuilder {
         public:
             EnumTypeBuilder(const String& name, Namespace* ns)
-                : ITypeBuilder(new EnumType(name, sizeof(Prim) * 8, ns)), m_hasDtor(false)
+                : ITypeBuilder(new EnumType(name, meta<std::underlying_type_t<Prim>>(), ns)), m_hasDtor(false)
             {
                 Registry::Add(m_type, type_hash<Prim>());
             }

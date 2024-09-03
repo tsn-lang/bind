@@ -163,27 +163,16 @@ namespace bind {
             virtual bool isConvertibleTo(DataType* to, AccessFlags accessMask = FullAccessRights) const;
 
             /**
-             * @brief Checks if this type can be implicitly assigned to objects of another
-             * type. A data type is implicitly assignable to another data type if one of
-             * the following is true:
-             * 
-             * - Both this type and the other type are primitives
-             * 
-             * - Both this type and the other type are the same trivially copyable type
-             * 
-             * - Both this type and the other type are equivalent and trivially copyable
-             * 
-             * @return Returns true if this type is implicitly assignable to the other type
-             */
-            virtual bool isImplicitlyAssignableTo(DataType* to) const;
-
-            /**
              * @brief Checks if this type is equivalent to some data type. A data type is
              * equivalent to another data type if all of the following are true:
              * 
              * All of the following attributes for both types must be the same
              * 
-             *     - is_pod
+             *     - size
+             * 
+             *     - is_trivial
+             * 
+             *     - is_standard_layout
              * 
              *     - is_trivially_constructible 
              * 

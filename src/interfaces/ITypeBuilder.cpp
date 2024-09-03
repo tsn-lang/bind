@@ -25,6 +25,15 @@ namespace bind {
         DataType* type,
         String name
     ) {
+        DataType::Property* existing = m_type->m_props.find([&name](const DataType::Property& p) {
+            if (p.flags.is_method || p.flags.is_pseudo_method || p.flags.is_ctor || p.flags.is_dtor) return false;
+            return p.name == name;
+        });
+
+        if (existing) {
+            throw Exception("Type '%s' already has a member named '%s'", m_type->getName().c_str(), name.c_str());
+        }
+
         m_type->m_props.push(DataType::Property(offset, flags, type, name));
         
         if (offset >= 0) updateFFI();
@@ -38,6 +47,61 @@ namespace bind {
         DataType* type,
         String name
     ) {
+        if (flags.is_method || flags.is_pseudo_method) {
+            DataType::Property* existing = m_type->m_props.find([&name, &type](const DataType::Property& p) {
+                if (!p.flags.is_method && !p.flags.is_pseudo_method) return false;
+                if (p.name != name) return false;
+
+                // todo:
+                // It may be necessary to do extra work since a normal method and pseudo-method with the
+                // same effective signature will have different signatures. Pseudo-method functions on
+                // the host have an explicit 'this' argument that is reflected in its signature
+
+                return p.type->isEqualTo(type);
+            });
+
+            if (existing) {
+                throw Exception(
+                    "Type '%s' already has a method named '%s' with the signature '%s'",
+                    m_type->getName().c_str(),
+                    name.c_str(),
+                    type->getFullName().c_str()
+                );
+            }
+        } else if (flags.is_ctor) {
+            DataType::Property* existing = m_type->m_props.find([&name, &type](const DataType::Property& p) {
+                if (!p.flags.is_ctor) return false;
+                if (p.name != name) return false;
+                return p.type->isEqualTo(type);
+            });
+
+            if (existing) {
+                throw Exception(
+                    "Type '%s' already has a constructor with the signature '%s'",
+                    m_type->getName().c_str(),
+                    type->getFullName().c_str()
+                );
+            }
+        } else if (flags.is_dtor) {
+            DataType::Property* existing = m_type->m_props.find([&name](const DataType::Property& p) {
+                return p.flags.is_dtor == 1;
+            });
+
+            if (existing) {
+                throw Exception("Type '%s' already has a destructor", m_type->getName().c_str());
+            }
+        } else {
+            // static property
+            DataType::Property* existing = m_type->m_props.find([&name](const DataType::Property& p) {
+                if (p.flags.is_method || p.flags.is_pseudo_method || p.flags.is_ctor || p.flags.is_dtor) return false;
+                return p.name == name;
+            });
+
+            if (existing) {
+                throw Exception("Type '%s' already has a member named '%s'", m_type->getName().c_str(), name.c_str());
+            }
+        }
+
         m_type->m_props.push(DataType::Property(address, flags, type, name));
         return m_type->m_props.last();
     }

@@ -14,6 +14,7 @@ namespace bind {
     class Registry {
         public:
             static void Create();
+            static void Reset();
             static void Destroy();
 
             static void Add(DataType* tp);
