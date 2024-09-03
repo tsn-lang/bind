@@ -246,8 +246,6 @@ void testMethodsOnObjects() {
     REQUIRE(obj2->isConstructableWith({ obj2->getPointerType() }));
 }
 
-
-
 void test_findProperties() {
     Registry::Reset();
     build<i32>("i32");
