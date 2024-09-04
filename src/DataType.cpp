@@ -180,19 +180,13 @@ namespace bind {
             }
 
             if (search.doCheckArgs) {
-                auto& args = sig->getArgs();
+                auto args = ((Function*)p.address.get())->getExplicitArgs();
 
-                // offset arg count by 1 for pseudo methods because they are forced by the bind API
-                // to accept the 'this' parameter as the first argument, but we don't want to force
-                // that to have to be included in function searches
-                if (!p.flags.is_pseudo_method && search.argTypes.size() != args.size()) continue;
-                else if (p.flags.is_pseudo_method && search.argTypes.size() != args.size() - 1) continue;
+                if (search.argTypes.size() != args.size()) continue;
 
                 bool isMatch = true;
-                for (u32 a = p.flags.is_pseudo_method ? 1 : 0;a < args.size();a++) {
-                    DataType* providedType;
-                    if (p.flags.is_pseudo_method) providedType = search.argTypes[a - 1];
-                    else providedType = search.argTypes[a];
+                for (u32 a = 0;a < args.size();a++) {
+                    DataType* providedType = search.argTypes[a];
 
                     if (search.argTypesStrict) {
                         if (!args[a].type->isEquivalentTo(providedType)) {
@@ -251,26 +245,23 @@ namespace bind {
             if (p.name.size() != ConstructorNameLen) continue;
             if (p.name != ConstructorName) continue;
             
-            auto& args = sig->getArgs();
-            // offset this and the loop by 1 because constructors are wrapped and the wrapper
-            // takes the memory to construct the object in as the first parameter, then the
-            // actual parameters come after that
-            if (argTypes.size() != args.size() - 1) continue;
+            auto args = ((Function*)p.address.get())->getExplicitArgs();
+            if (argTypes.size() != args.size()) continue;
 
             bool isMatch = true;
-            for (u32 a = 1;a < args.size();a++) {
+            for (u32 a = 0;a < args.size();a++) {
                 if (strict) {
-                    if (!args[a].type->isEquivalentTo(argTypes[a - 1])) {
+                    if (!args[a].type->isEquivalentTo(argTypes[a])) {
                         isMatch = false;
                         break;
                     }
                 } else {
-                    if (!args[a].type->isConvertibleTo(argTypes[a - 1])) {
+                    if (!args[a].type->isConvertibleTo(argTypes[a])) {
                         isMatch = false;
                         break;
                     }
 
-                    if (strictMatchCount <= 1 && isStrictMatch && singleStrictMatch && !args[a].type->isEquivalentTo(argTypes[a - 1])) {
+                    if (strictMatchCount <= 1 && isStrictMatch && singleStrictMatch && !args[a].type->isEquivalentTo(argTypes[a])) {
                         isStrictMatch = false;
                     }
                 }
@@ -299,7 +290,7 @@ namespace bind {
 
             FunctionType* sig = (FunctionType*)p.type;
             
-            if (sig->getArgs().size() != 0) continue;
+            if (((Function*)p.address.get())->getExplicitArgs().size() != 0) continue;
             if (p.name.size() != CastOperatorNameLen) continue;
             if (p.name != CastOperatorName) continue;
 

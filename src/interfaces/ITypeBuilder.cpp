@@ -1,5 +1,6 @@
 #include <bind/interfaces/ITypeBuilder.h>
 #include <bind/DataType.h>
+#include <bind/Function.h>
 #include <bind/Registry.h>
 #include <utils/Array.hpp>
 #include <utils/Exception.h>
@@ -48,6 +49,9 @@ namespace bind {
         String name
     ) {
         if (flags.is_method || flags.is_pseudo_method) {
+            if (flags.is_pseudo_method) ((Function*)address.get())->m_implicitArgCount = 1; // 'this' pointer
+            else ((Function*)address.get())->m_implicitArgCount = 2; // `Function` pointer, 'this' pointer
+
             DataType::Property* existing = m_type->m_props.find([&name, &type](const DataType::Property& p) {
                 if (!p.flags.is_method && !p.flags.is_pseudo_method) return false;
                 if (p.name != name) return false;
@@ -69,6 +73,8 @@ namespace bind {
                 );
             }
         } else if (flags.is_ctor) {
+            ((Function*)address.get())->m_implicitArgCount = 1; // 'this' pointer
+
             DataType::Property* existing = m_type->m_props.find([&name, &type](const DataType::Property& p) {
                 if (!p.flags.is_ctor) return false;
                 if (p.name != name) return false;
@@ -83,6 +89,8 @@ namespace bind {
                 );
             }
         } else if (flags.is_dtor) {
+            ((Function*)address.get())->m_implicitArgCount = 1; // 'this' pointer
+
             DataType::Property* existing = m_type->m_props.find([&name](const DataType::Property& p) {
                 return p.flags.is_dtor == 1;
             });

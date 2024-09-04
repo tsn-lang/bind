@@ -76,7 +76,7 @@ namespace bind {
             Registry::GlobalNamespace()
         );
 
-        func->setCallHandler(HostCallHandler::get());
+        func->setCallHandler(new HostCallHandler(func));
 
         Registry::Add(func);
         return func;

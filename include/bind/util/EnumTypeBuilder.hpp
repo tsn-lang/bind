@@ -39,7 +39,7 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
-                func->setCallHandler(HostCallHandler::get());
+                func->setCallHandler(new HostCallHandler(func));
 
                 Registry::Add(func);
 
@@ -67,7 +67,7 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
-                func->setCallHandler(HostCallHandler::get());
+                func->setCallHandler(new HostCallHandler(func));
 
                 Registry::Add(func);
 
@@ -92,7 +92,7 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
-                func->setCallHandler(HostCallHandler::get());
+                func->setCallHandler(new HostCallHandler(func));
 
                 Registry::Add(func);
 
@@ -118,7 +118,7 @@ namespace bind {
                     m_type->getOwnNamespace()
                 );
 
-                func->setCallHandler(HostCallHandler::get());
+                func->setCallHandler(new HostCallHandler(func));
 
                 Registry::Add(func);
 

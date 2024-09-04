@@ -142,15 +142,21 @@ namespace bind {
             throw Exception(String::Format("Registry::MethodSignature - Class type '%s' has not been registered", type_name<Ret>()));
         }
 
-        const char* argTpNames[] = { type_name<Args>()..., nullptr };
-        DataType* argTps[] = { GetType<Args>()..., nullptr };
-        u32 argCount = u32(sizeof(argTps) / sizeof(DataType*)) - 1;
+        // wrapped method signature is Ret (*)(Function*, Cls*, Args...)
+        const char* argTpNames[] = { type_name<void*>(), selfTp->getPointerType()->getFullName().c_str(), type_name<Args>()... };
+        DataType* argTps[] = { GetType<void*>(), selfTp->getPointerType(), GetType<Args>()... };
+        u32 argCount = u32(sizeof(argTps) / sizeof(DataType*));
 
         String name = retTp->getFullName() + " " + selfTp->getFullName() + "::(";
         for (u8 i = 0;i < argCount;i++) {
             if (!argTps[i]) {
                 delete sig;
-                throw Exception(String::Format("Registry::MethodSignature - Type '%s' of argument %d has not been registered", argTpNames[i], i));
+                throw Exception(
+                    "Registry::MethodSignature - Type '%s' of %s argument %d has not been registered",
+                    i <= 2 ? "implicit" : "explicit",
+                    argTpNames[i],
+                    i
+                );
             }
 
             if (i > 0) name += ",";
@@ -170,13 +176,7 @@ namespace bind {
         
         Add(sig, hash);
 
-        #if defined(X86_WIN64)
-            sig->initCallInterface(FFI_DEFAULT_ABI);
-        #elif defined(X86_64) || (defined (__x86_64__) && defined (X86_DARWIN))
-            sig->initCallInterface(FFI_DEFAULT_ABI);
-        #elif defined(X86_WIN32)
-            sig->initCallInterface(FFI_THISCALL);
-        #endif
+        sig->initCallInterface(FFI_DEFAULT_ABI);
 
         return sig;
     }

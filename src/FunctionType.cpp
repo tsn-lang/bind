@@ -48,13 +48,7 @@ namespace bind {
     }
 
     void FunctionType::initCallInterface(ffi_abi abi) {
-        m_ffiArgTypes.reserve(m_args.size() + 1);
-        if (m_thisType) {
-            // actually calling a method wrapper, not the method directly
-            m_ffiArgTypes.push(&ffi_type_pointer); // function pointer
-            m_ffiArgTypes.push(&ffi_type_pointer); // 'this' pointer
-        }
-        m_ffiArgTypes.append(m_args.map([](const Argument& a) { return a.type->getFFI(); }));
+        m_ffiArgTypes = m_args.map([](const Argument& a) { return a.type->getFFI(); });
 
         if (ffi_prep_cif(&m_cif, abi, m_ffiArgTypes.size(), m_returnType->getFFI(), m_ffiArgTypes.data()) != FFI_OK) {
             throw Exception("FunctionType::initCallInterface - Failed to prep FFI call interface");
