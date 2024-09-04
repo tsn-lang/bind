@@ -360,7 +360,7 @@ void test_findMethods() {
     REQUIRE(results.size() == 1);
     REQUIRE(singleStrict == results[0]);
     REQUIRE(results[0]->getSignature()->getReturnType()->isEqualTo(Registry::GetType<void>()));
-    REQUIRE(results[0]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
+    REQUIRE(results[0]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
 
     // by name, return type, args (return not strict, args strict)
     singleStrict = nullptr;
@@ -374,7 +374,7 @@ void test_findMethods() {
     REQUIRE(results.size() == 1);
     REQUIRE(singleStrict == results[0]);
     REQUIRE(results[0]->getSignature()->getReturnType()->isEqualTo(Registry::GetType<void>()));
-    REQUIRE(results[0]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
+    REQUIRE(results[0]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
 
     // by name, return type, args (return strict, args strict)
     singleStrict = nullptr;
@@ -388,7 +388,7 @@ void test_findMethods() {
     REQUIRE(results.size() == 1);
     REQUIRE(singleStrict == results[0]);
     REQUIRE(results[0]->getSignature()->getReturnType()->isEqualTo(Registry::GetType<void>()));
-    REQUIRE(results[0]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
+    REQUIRE(results[0]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
     
     // one with convertible return type, one with equivalent return type
     singleStrict = nullptr;
@@ -411,10 +411,10 @@ void test_findMethods() {
     REQUIRE(singleStrict != nullptr);
     REQUIRE(results.size() == 3);
     REQUIRE(singleStrict == results[2]);
-    REQUIRE(results[0]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
-    REQUIRE(results[1]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
+    REQUIRE(results[0]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
+    REQUIRE(results[1]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
     REQUIRE(results[0] != results[1]);
-    REQUIRE(results[2]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i64>()));
+    REQUIRE(results[2]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i64>()));
     
     // convertible return type, not strict
     singleStrict = nullptr;
@@ -447,10 +447,10 @@ void test_findMethods() {
     );
     REQUIRE(singleStrict == nullptr);
     REQUIRE(results.size() == 3);
-    REQUIRE(results[0]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
-    REQUIRE(results[1]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
+    REQUIRE(results[0]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
+    REQUIRE(results[1]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
     REQUIRE(results[0] != results[1]);
-    REQUIRE(results[2]->getSignature()->getArgs()[0].type->isEqualTo(Registry::GetType<i64>()));
+    REQUIRE(results[2]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i64>()));
 
     // convertible arg type, strict
     singleStrict = nullptr;
@@ -533,8 +533,8 @@ void test_findConstructors() {
     results = tp->findConstructors({ Registry::GetType<i32>() }, false, FullAccessRights, &singleStrict);
     REQUIRE(singleStrict != nullptr);
     REQUIRE(results.size() == 2);
-    REQUIRE(results[0]->getSignature()->getArgs()[1].type->isEqualTo(Registry::GetType<i32>()));
-    REQUIRE(results[1]->getSignature()->getArgs()[1].type->isEqualTo(Registry::GetType<i64>()));
+    REQUIRE(results[0]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i32>()));
+    REQUIRE(results[1]->getExplicitArgs()[0].type->isEqualTo(Registry::GetType<i64>()));
     REQUIRE(singleStrict == results[0]);
 }
 
