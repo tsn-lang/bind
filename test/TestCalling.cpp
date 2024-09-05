@@ -45,10 +45,10 @@ void resetTestData() {
 void testPrimitiveArguments() {
     Registry::Reset();
 
-    build<void>("void");
-    build<i32>("i32");
+    type<void>("void");
+    type<i32>("i32");
     
-    auto mb = build<method_test>("method_test");
+    auto mb = type<method_test>("method_test");
     mb.method("realMethod", &method_test::set);
     mb.pseudoMethod("pseudoMethod", +[](method_test* self, i32 a, i32 b, i32 c) {
         self->a = a;
@@ -114,14 +114,14 @@ void testPrimitiveArguments() {
 void testObjectByValArguments() {
     Registry::Reset();
 
-    build<void>("void");
-    build<i32>("i32");
-    auto pb = build<plain_struct>("plain_struct");
+    type<void>("void");
+    type<i32>("i32");
+    auto pb = type<plain_struct>("plain_struct");
     pb.prop("a", &plain_struct::a);
     // b purposefully omitted
     pb.prop("c", &plain_struct::c);
     
-    auto mb = build<method_test>("method_test");
+    auto mb = type<method_test>("method_test");
     mb.method("realMethod", &method_test::setFromValue);
     mb.pseudoMethod("pseudoMethod", +[](method_test* self, method_test val) {
         self->a = val.a;
@@ -188,14 +188,14 @@ void testObjectByValArguments() {
 void testObjectByRefArguments() {
     Registry::Reset();
 
-    build<void>("void");
-    build<i32>("i32");
-    auto pb = build<plain_struct>("plain_struct");
+    type<void>("void");
+    type<i32>("i32");
+    auto pb = type<plain_struct>("plain_struct");
     pb.prop("a", &plain_struct::a);
     // b purposefully omitted
     pb.prop("c", &plain_struct::c);
     
-    auto mb = build<method_test>("method_test");
+    auto mb = type<method_test>("method_test");
     mb.method("realMethod", &method_test::setFromRef);
     mb.pseudoMethod("pseudoMethod", +[](method_test* self, method_test& val) {
         self->a = val.a;
@@ -265,10 +265,10 @@ void testObjectByRefArguments() {
 void testPrimitiveReturnValue() {
     Registry::Reset();
 
-    build<void>("void");
-    build<i32>("i32");
+    type<void>("void");
+    type<i32>("i32");
     
-    auto mb = build<method_test>("method_test");
+    auto mb = type<method_test>("method_test");
     mb.method("realMethod", &method_test::getA);
     mb.pseudoMethod("pseudoMethod", +[](method_test* self) {
         return self->a;
@@ -326,14 +326,14 @@ void testPrimitiveReturnValue() {
 void testObjectReturnValue() {
     Registry::Reset();
 
-    build<void>("void");
-    build<i32>("i32");
-    auto pb = build<plain_struct>("plain_struct");
+    type<void>("void");
+    type<i32>("i32");
+    auto pb = type<plain_struct>("plain_struct");
     pb.prop("a", &plain_struct::a);
     // b purposefully omitted
     pb.prop("c", &plain_struct::c);
     
-    auto mb = build<method_test>("method_test");
+    auto mb = type<method_test>("method_test");
     mb.method("realMethod", &method_test::toStructValue);
     mb.pseudoMethod("pseudoMethod", +[](method_test* self, plain_struct& v) {
         return plain_struct({ self->a + v.a, self->b + v.b, self->c + v.c });
@@ -408,14 +408,14 @@ void testObjectReturnValue() {
 void testPointerReturnValue() {
     Registry::Reset();
 
-    build<void>("void");
-    build<i32>("i32");
-    auto pb = build<plain_struct>("plain_struct");
+    type<void>("void");
+    type<i32>("i32");
+    auto pb = type<plain_struct>("plain_struct");
     pb.prop("a", &plain_struct::a);
     // b purposefully omitted
     pb.prop("c", &plain_struct::c);
     
-    auto mb = build<method_test>("method_test");
+    auto mb = type<method_test>("method_test");
     mb.method("realMethod", &method_test::toStructRef);
     mb.pseudoMethod("pseudoMethod", +[](method_test* self) {
         return self;

@@ -4,7 +4,7 @@ template <typename T>
 void testPrimitiveMetadata(const char* name) {
     Registry::Reset();
 
-    PrimitiveTypeBuilder<T> b = build<T>(name);
+    PrimitiveTypeBuilder<T> b = type<T>(name);
     const type_meta& info = b.getType()->getInfo();
 
     if constexpr (std::is_same_v<T, void>) {
@@ -40,7 +40,7 @@ template <typename T>
 void testEnumMetadata(const char* name) {
     Registry::Reset();
 
-    EnumTypeBuilder<T> b = build<T>(name);
+    EnumTypeBuilder<T> b = type<T>(name);
     const type_meta& info = b.getType()->getInfo();
 
     REQUIRE(size_t(info.size) == sizeof(T));
@@ -63,7 +63,7 @@ template <typename T>
 void testPointerMetadata(const char* name) {
     Registry::Reset();
     
-    auto b = build<T>(name);
+    auto b = type<T>(name);
     const type_meta& info = b.getType()->getPointerType()->getInfo();
 
     REQUIRE(size_t(info.size) == sizeof(void*));
@@ -86,7 +86,7 @@ template <typename T>
 void testObjectMetadata(const char* name) {
     Registry::Reset();
 
-    ObjectTypeBuilder<T> b = build<T>(name);
+    ObjectTypeBuilder<T> b = type<T>(name);
     const type_meta& info = b.getType()->getInfo();
     REQUIRE(size_t(info.size) == sizeof(T));
     REQUIRE(info.is_trivial == (std::is_trivial_v<T> ? 1 : 0));
@@ -107,7 +107,7 @@ void testObjectMetadata(const char* name) {
 template <typename First, typename... Rest>
 void bindTypes(const char* prefix, u32 index) {
     if (!Registry::GetType<First>()) {
-        build<First>(String::Format("%s_%d", prefix, index));
+        type<First>(String::Format("%s_%d", prefix, index));
     }
 
     if constexpr (std::tuple_size_v<std::tuple<Rest...>> > 0) {
@@ -119,7 +119,7 @@ template <typename Ret, typename... Args>
 void testFunctionPointerMetadata() {
     Registry::Reset();
 
-    build<Ret>("return_type");
+    type<Ret>("return_type");
     if constexpr (std::tuple_size_v<std::tuple<Args...>> > 0) bindTypes<Args...>("arg_type", 0);
 
     FunctionType* sig = Registry::Signature<Ret, Args...>();
@@ -145,8 +145,8 @@ template <typename Ret, typename Cls, typename... Args>
 void testMethodPointerMetadata() {
     Registry::Reset();
 
-    build<Ret>("return_type");
-    build<Cls>("class_type");
+    type<Ret>("return_type");
+    type<Cls>("class_type");
     if constexpr (std::tuple_size_v<std::tuple<Args...>> > 0) bindTypes<Args...>("arg_type", 0);
 
     FunctionType* sig = Registry::MethodSignature<Ret, Cls, Args...>();

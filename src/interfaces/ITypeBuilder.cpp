@@ -115,7 +115,15 @@ namespace bind {
     }
     
     EnumType::Field& ITypeBuilder::_addEnumValue(const String& name, u64 value) {
-        ((EnumType*)m_type)->m_fields.push({ name, value });
+        ((EnumType*)m_type)->m_fields.push({ name });
+        ((EnumType*)m_type)->m_fields.last().value.u = value;
+        ((EnumType*)m_type)->m_fieldIndexMap.insert(std::pair<String, u32>(name, ((EnumType*)m_type)->m_fields.size() - 1));
+        return ((EnumType*)m_type)->m_fields.last();
+    }
+    
+    EnumType::Field& ITypeBuilder::_addEnumValue(const String& name, i64 value) {
+        ((EnumType*)m_type)->m_fields.push({ name });
+        ((EnumType*)m_type)->m_fields.last().value.i = value;
         ((EnumType*)m_type)->m_fieldIndexMap.insert(std::pair<String, u32>(name, ((EnumType*)m_type)->m_fields.size() - 1));
         return ((EnumType*)m_type)->m_fields.last();
     }

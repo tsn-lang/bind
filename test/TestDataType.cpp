@@ -3,7 +3,7 @@
 void testCommonMethods() {
     Registry::Reset();
 
-    DataType* sint = build<i32>("i32");
+    DataType* sint = type<i32>("i32");
 
     REQUIRE(sint->getOwnNamespace()->getName() == "i32");
     REQUIRE(sint->getOwnNamespace()->getFullName() == "i32");
@@ -65,18 +65,18 @@ void testPrimitiveTypeMethods() {
 void testMethodsOnPrimitives() {
     Registry::Reset();
 
-    build<void>("void");
-    build<bool>("bool");
-    build<i8>("i8");
-    build<i16>("i16");
-    build<i32>("i32");
-    build<i64>("i64");
-    build<u8>("u8");
-    build<u16>("u16");
-    build<u32>("u32");
-    build<u64>("u64");
-    build<f32>("f32");
-    build<f64>("f64");
+    type<void>("void");
+    type<bool>("bool");
+    type<i8>("i8");
+    type<i16>("i16");
+    type<i32>("i32");
+    type<i64>("i64");
+    type<u8>("u8");
+    type<u16>("u16");
+    type<u32>("u32");
+    type<u64>("u64");
+    type<f32>("f32");
+    type<f64>("f64");
 
     testPrimitiveTypeMethods<void>();
     testPrimitiveTypeMethods<bool>();
@@ -124,18 +124,18 @@ void testPointerTypeMethods() {
 void testMethodsOnPointers() {
     Registry::Reset();
 
-    build<void>("void");
-    build<bool>("bool");
-    build<i8>("i8");
-    build<i16>("i16");
-    build<i32>("i32");
-    build<i64>("i64");
-    build<u8>("u8");
-    build<u16>("u16");
-    build<u32>("u32");
-    build<u64>("u64");
-    build<f32>("f32");
-    build<f64>("f64");
+    type<void>("void");
+    type<bool>("bool");
+    type<i8>("i8");
+    type<i16>("i16");
+    type<i32>("i32");
+    type<i64>("i64");
+    type<u8>("u8");
+    type<u16>("u16");
+    type<u32>("u32");
+    type<u64>("u64");
+    type<f32>("f32");
+    type<f64>("f64");
 
     testPointerTypeMethods<void>();
     testPointerTypeMethods<bool>();
@@ -154,23 +154,23 @@ void testMethodsOnPointers() {
 void testMethodsOnObjects() {
     Registry::Reset();
 
-    build<void>("void");
-    build<bool>("bool");
-    build<i8>("i8");
-    build<i16>("i16");
-    build<i32>("i32");
-    build<i64>("i64");
-    build<u8>("u8");
-    build<u16>("u16");
-    build<u32>("u32");
-    build<u64>("u64");
-    build<f32>("f32");
-    build<f64>("f64");
+    type<void>("void");
+    type<bool>("bool");
+    type<i8>("i8");
+    type<i16>("i16");
+    type<i32>("i32");
+    type<i64>("i64");
+    type<u8>("u8");
+    type<u16>("u16");
+    type<u32>("u32");
+    type<u64>("u64");
+    type<f32>("f32");
+    type<f64>("f64");
     
-    ObjectTypeBuilder<plain_struct> bobj0 = build<plain_struct>("plain_struct");
-    ObjectTypeBuilder<similar_to_plain_struct> bobj1 = build<similar_to_plain_struct>("similar_to_plain_struct");
-    ObjectTypeBuilder<non_trivial_copy> bobj2 = build<non_trivial_copy>("non_trivial_copy");
-    ObjectTypeBuilder<equivalent_to_plain_struct> bobj3 = build<equivalent_to_plain_struct>("equivalent_to_plain_struct");
+    ObjectTypeBuilder<plain_struct> bobj0 = type<plain_struct>("plain_struct");
+    ObjectTypeBuilder<similar_to_plain_struct> bobj1 = type<similar_to_plain_struct>("similar_to_plain_struct");
+    ObjectTypeBuilder<non_trivial_copy> bobj2 = type<non_trivial_copy>("non_trivial_copy");
+    ObjectTypeBuilder<equivalent_to_plain_struct> bobj3 = type<equivalent_to_plain_struct>("equivalent_to_plain_struct");
     DataType* obj0 = bobj0;
     DataType* obj1 = bobj1;
     DataType* obj2 = bobj2;
@@ -248,10 +248,10 @@ void testMethodsOnObjects() {
 
 void test_findProperties() {
     Registry::Reset();
-    build<i32>("i32");
-    build<void>("void");
+    type<i32>("i32");
+    type<void>("void");
 
-    ObjectTypeBuilder<plain_struct> obj = build<plain_struct>("plain_struct");
+    ObjectTypeBuilder<plain_struct> obj = type<plain_struct>("plain_struct");
     DataType* tp = obj;
 
     REQUIRE(tp->getProps().size() == 0);
@@ -263,7 +263,7 @@ void test_findProperties() {
 
     REQUIRE(tp->getProps().size() == 4);
 
-    utils::Array<const bind::DataType::Property *> results;
+    utils::Array<const DataType::Property *> results;
     
     results = tp->findProperties("a");
     REQUIRE(results.size() == 1);
@@ -294,11 +294,11 @@ void test_findProperties() {
 
 void test_findMethods() {
     Registry::Reset();
-    build<i64>("i64");
-    build<i32>("i32");
-    build<i16>("i16");
-    build<void>("void");
-    auto b = build<struct_with_methods>("test");
+    type<i64>("i64");
+    type<i32>("i32");
+    type<i16>("i16");
+    type<void>("void");
+    auto b = type<struct_with_methods>("test");
     b.ctor();
     b.ctor<i32>();
     b.ctor<i64>();
@@ -499,11 +499,11 @@ void test_findMethods() {
 
 void test_findConstructors() {
     Registry::Reset();
-    build<i64>("i64");
-    build<i32>("i32");
-    build<i16>("i16");
-    build<void>("void");
-    auto b = build<struct_with_methods>("test");
+    type<i64>("i64");
+    type<i32>("i32");
+    type<i16>("i16");
+    type<void>("void");
+    auto b = type<struct_with_methods>("test");
     b.ctor().accessFlags = 0b0001000; // arbitrary bits
     b.ctor<i32>();
     b.ctor<i64>();
@@ -540,11 +540,11 @@ void test_findConstructors() {
 
 void test_findConversionOperator() {
     Registry::Reset();
-    build<i64>("i64");
-    build<i32>("i32");
-    build<i16>("i16");
-    build<void>("void");
-    auto b = build<struct_with_methods>("test");
+    type<i64>("i64");
+    type<i32>("i32");
+    type<i16>("i16");
+    type<void>("void");
+    auto b = type<struct_with_methods>("test");
     b.castOperator<i32>().accessFlags = 0b0001000; // arbitrary bits
     b.castOperator<i64>();
     DataType* tp = b;

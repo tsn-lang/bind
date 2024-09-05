@@ -4,9 +4,9 @@
 namespace bind {
     template <typename T>
     std::enable_if_t<std::is_class_v<T>, ObjectTypeBuilder<T>>
-    Namespace::build(const String& name) {
+    Namespace::type(const String& name) {
         DataType* tp = Registry::GetType<T>();
-        if (tp) throw Exception(String::Format("Namespace::build - Type '%s' has already been registered", type_name<T>()));
+        if (tp) throw Exception(String::Format("Namespace::type - Type '%s' has already been registered", type_name<T>()));
 
         ObjectTypeBuilder<T> ret = ObjectTypeBuilder<T>(name, this);
         m_symbolMap.insert(std::pair<u64, ISymbol*>(ret.getType()->getSymbolId(), ret.getType()));
@@ -24,9 +24,9 @@ namespace bind {
 
     template <typename T>
     std::enable_if_t<std::is_fundamental_v<T>, PrimitiveTypeBuilder<T>>
-    Namespace::build(const String& name) {
+    Namespace::type(const String& name) {
         DataType* tp = Registry::GetType<T>();
-        if (tp) throw Exception(String::Format("Namespace::build - Type '%s' has already been registered", type_name<T>()));
+        if (tp) throw Exception(String::Format("Namespace::type - Type '%s' has already been registered", type_name<T>()));
 
         PrimitiveTypeBuilder<T> ret = PrimitiveTypeBuilder<T>(name, this);
         m_symbolMap.insert(std::pair<u64, ISymbol*>(ret.getType()->getSymbolId(), ret.getType()));
@@ -44,9 +44,9 @@ namespace bind {
 
     template <typename T>
     std::enable_if_t<std::is_enum_v<T>, EnumTypeBuilder<T>>
-    Namespace::build(const String& name) {
+    Namespace::type(const String& name) {
         DataType* tp = Registry::GetType<T>();
-        if (tp) throw Exception(String::Format("Namespace::build - Type '%s' has already been registered", type_name<T>()));
+        if (tp) throw Exception(String::Format("Namespace::type - Type '%s' has already been registered", type_name<T>()));
 
         return EnumTypeBuilder<T>(name, this);
     }
@@ -57,7 +57,7 @@ namespace bind {
         DataType* tp = Registry::GetType<T>();
         if (!tp) throw Exception(String::Format("Namespace::extend - Type '%s' has not been registered", type_name<T>()));
 
-        return EnumTypeBuilder<T>(tp);
+        return EnumTypeBuilder<T>((EnumType*)tp);
     }
     
     template <typename T>
@@ -65,7 +65,7 @@ namespace bind {
         DataType* tp = Registry::GetType<T>();
         if (!tp) throw Exception(String::Format("Namespace::value - Type '%s' has not been registered", type_name<T>()));
 
-        ValuePointer v = new ValuePointer(name, tp, val, this);
+        ValuePointer* v = new ValuePointer(name, tp, val, this);
         Registry::Add(v);
         return v;
     }

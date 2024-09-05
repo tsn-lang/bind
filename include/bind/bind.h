@@ -17,7 +17,7 @@
 namespace bind {
     template <typename T>
     std::enable_if_t<std::is_class_v<T>, ObjectTypeBuilder<T>>
-    build(const String& name);
+    type(const String& name);
 
     template <typename T>
     std::enable_if_t<std::is_class_v<T>, ObjectTypeBuilder<T>>
@@ -25,7 +25,7 @@ namespace bind {
 
     template <typename T>
     std::enable_if_t<std::is_fundamental_v<T>, PrimitiveTypeBuilder<T>>
-    build(const String& name);
+    type(const String& name);
 
     template <typename T>
     std::enable_if_t<std::is_fundamental_v<T>, PrimitiveTypeBuilder<T>>
@@ -33,7 +33,7 @@ namespace bind {
 
     template <typename T>
     std::enable_if_t<std::is_enum_v<T>, EnumTypeBuilder<T>>
-    build(const String& name);
+    type(const String& name);
     
     template <typename T>
     std::enable_if_t<std::is_enum_v<T>, EnumTypeBuilder<T>>

@@ -44,3 +44,21 @@ enum enum_type {
 };
 
 enum class enum_class_type { a, b, c };
+
+enum enum_type_u8 : u8 {};
+enum enum_type_u16 : u16 {};
+enum enum_type_u32 : u32 {};
+enum enum_type_u64 : u64 {};
+enum enum_type_i8 : i8 {};
+enum enum_type_i16 : i16 {};
+enum enum_type_i32 : i32 {};
+enum enum_type_i64 : i64 {};
+
+enum class enum_class_type_u8 : u8 {};
+enum class enum_class_type_u16 : u16 {};
+enum class enum_class_type_u32 : u32 {};
+enum class enum_class_type_u64 : u64 {};
+enum class enum_class_type_i8 : i8 {};
+enum class enum_class_type_i16 : i16 {};
+enum class enum_class_type_i32 : i32 {};
+enum class enum_class_type_i64 : i64 {};

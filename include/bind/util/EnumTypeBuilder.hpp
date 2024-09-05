@@ -22,8 +22,12 @@ namespace bind {
                 : ITypeBuilder(extend), m_hasDtor(false) {
             }
 
-            EnumType::Field& addEnumValue(const String& name, u64 value) {
-                return _addEnumValue(name, value);
+            EnumType::Field& addEnumValue(const String& name, Prim value) {
+                if constexpr (std::is_unsigned_v<std::underlying_type_t<Prim>>) {
+                    return _addEnumValue(name, u64(value));
+                } else {
+                    return _addEnumValue(name, i64(value));
+                }
             }
 
             template <typename... Args>

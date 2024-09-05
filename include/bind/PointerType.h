@@ -8,7 +8,6 @@ namespace bind {
             ~PointerType();
 
             DataType* getDestinationType() const;
-            DataType* getBaseType() const;
         
         protected:
             friend class Registry;
