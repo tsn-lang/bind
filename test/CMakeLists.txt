@@ -13,7 +13,9 @@ include_directories(
     ${FFI_INCLUDE_DIR}
 )
 
-add_subdirectory(Catch2)
+if (NOT TARGET Catch2::Catch2)
+    add_subdirectory(Catch2)
+endif()
 
 file(GLOB all_sources "./*.cpp")
 add_executable(bind_test ${all_sources})
