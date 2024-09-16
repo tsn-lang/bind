@@ -120,9 +120,39 @@ namespace bind {
             }
 
             template <typename Ret>
-            DataType::Property& castOperator(const String& name, Ret (*fn)(Prim*)) {
+            DataType::Property& opCast(const String& name, Ret (*fn)(Prim*)) {
                 return method(CastOperatorName, fn);
             }
+
+            template <typename Ret, typename Rhs> DataType::Property& opAdd       (Ret (*fn)(Prim*, Rhs)) { return method("+" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opSub       (Ret (*fn)(Prim*, Rhs)) { return method("-" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opMul       (Ret (*fn)(Prim*, Rhs)) { return method("*" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opDiv       (Ret (*fn)(Prim*, Rhs)) { return method("/" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opMod       (Ret (*fn)(Prim*, Rhs)) { return method("%" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opAddEq     (Ret (*fn)(Prim*, Rhs)) { return method("+=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opSubEq     (Ret (*fn)(Prim*, Rhs)) { return method("-=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opMulEq     (Ret (*fn)(Prim*, Rhs)) { return method("*=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opDivEq     (Ret (*fn)(Prim*, Rhs)) { return method("/=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opModEq     (Ret (*fn)(Prim*, Rhs)) { return method("%=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opLogicalAnd(Ret (*fn)(Prim*, Rhs)) { return method("&&", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opLogicalOr (Ret (*fn)(Prim*, Rhs)) { return method("||", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opShiftLeft (Ret (*fn)(Prim*, Rhs)) { return method("<<", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opShiftRight(Ret (*fn)(Prim*, Rhs)) { return method(">>", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opAnd       (Ret (*fn)(Prim*, Rhs)) { return method("&" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opOr        (Ret (*fn)(Prim*, Rhs)) { return method("|" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opXOr       (Ret (*fn)(Prim*, Rhs)) { return method("^" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opAndEq     (Ret (*fn)(Prim*, Rhs)) { return method("&=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opOrEq      (Ret (*fn)(Prim*, Rhs)) { return method("|=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opXOrEq     (Ret (*fn)(Prim*, Rhs)) { return method("^=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opAssign    (Ret (*fn)(Prim*, Rhs)) { return method("=" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opEquality  (Ret (*fn)(Prim*, Rhs)) { return method("==", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opInequality(Ret (*fn)(Prim*, Rhs)) { return method("!=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opGreater   (Ret (*fn)(Prim*, Rhs)) { return method(">" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opGreaterEq (Ret (*fn)(Prim*, Rhs)) { return method(">=", fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opLess      (Ret (*fn)(Prim*, Rhs)) { return method("<" , fn); }
+            template <typename Ret, typename Rhs> DataType::Property& opLessEq    (Ret (*fn)(Prim*, Rhs)) { return method("<=", fn); }
+            template <typename Ret>               DataType::Property& opNot       (Ret (*fn)(Prim*))      { return method("!" , fn); }
+            template <typename Ret>               DataType::Property& opInvert    (Ret (*fn)(Prim*))      { return method("~" , fn); }
 
             template <typename T>
             DataType::Property& staticProp(const String& name, T* member) {
@@ -144,7 +174,6 @@ namespace bind {
                 Registry::Add(new ValuePointer(name, tp, member, m_type->getOwnNamespace()));
                 return addProperty((void*)member, f, tp, name);
             }
-        
 
         protected:
             bool m_hasDtor;

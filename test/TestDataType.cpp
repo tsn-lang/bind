@@ -527,8 +527,8 @@ void test_findConversionOperator() {
     type<i16>("i16");
     type<void>("void");
     auto b = type<struct_with_methods>("test");
-    b.castOperator<i32>().accessFlags = 0b0001000; // arbitrary bits
-    b.castOperator<i64>();
+    b.opCast<i32>().accessFlags = 0b0001000; // arbitrary bits
+    b.opCast<i64>();
     DataType* tp = b;
 
     Function* fn;

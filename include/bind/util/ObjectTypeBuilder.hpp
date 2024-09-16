@@ -9,6 +9,11 @@
 #include <utils/Pointer.hpp>
 
 namespace bind {
+    #define OP_BINDER(op, name)                                                                                                                \
+    template <typename Ret, typename Rhs> DataType::Property& name()                     { return method<Ret, Rhs>(#op, &Cls::operator op); }  \
+    template <typename Ret, typename Rhs> DataType::Property& name(Ret (Cls::*fn)(Rhs))  { return method<Ret, Rhs>(#op, fn); }                 \
+    template <typename Ret, typename Rhs> DataType::Property& name(Ret (*fn)(Cls*, Rhs)) { return pseudoMethod(#op, fn); }
+    
     template <typename Cls>
     class ObjectTypeBuilder : public ITypeBuilder {
         public:
@@ -164,14 +169,52 @@ namespace bind {
 
             template <typename DestTp>
             std::enable_if_t<std::is_member_function_pointer_v<decltype(&Cls::operator DestTp)>, DataType::Property&>
-            castOperator() {
+            opCast() {
                 return method(CastOperatorName, &Cls::operator DestTp);
             }
             
             template <typename Ret>
-            DataType::Property& pseudoCastOperator(const String& name, Ret (*fn)(Cls*)) {
+            DataType::Property& opCast(const String& name, Ret (*fn)(Cls*)) {
                 return pseudoMethod(CastOperatorName, fn);
             }
+
+            OP_BINDER(+, opAdd);
+            OP_BINDER(-, opSub);
+            OP_BINDER(*, opMul);
+            OP_BINDER(/, opDiv);
+            OP_BINDER(%, opMod);
+            OP_BINDER(+=, opAddEq);
+            OP_BINDER(-=, opSubEq);
+            OP_BINDER(*=, opMulEq);
+            OP_BINDER(/=, opDivEq);
+            OP_BINDER(%=, opModEq);
+            
+            OP_BINDER(&&, opLogicalAnd);
+            OP_BINDER(||, opLogicalOr);
+            OP_BINDER(<<, opShiftLeft);
+            OP_BINDER(>>, opShiftRight);
+            OP_BINDER(&, opAnd);
+            OP_BINDER(|, opOr);
+            OP_BINDER(^, opXOr);
+            OP_BINDER(&=, opAndEq);
+            OP_BINDER(|=, opOrEq);
+            OP_BINDER(^=, opXOrEq);
+
+            OP_BINDER(=, opAssign);
+            OP_BINDER(==, opEquality);
+            OP_BINDER(!=, opInequality);
+            OP_BINDER(>, opGreater);
+            OP_BINDER(>=, opGreaterEq);
+            OP_BINDER(<, opLess);
+            OP_BINDER(<=, opLessEq);
+            
+            template <typename Ret> DataType::Property& opNot()                 { return method<Ret>("!", &Cls::operator !); }
+            template <typename Ret> DataType::Property& opNot(Ret (Cls::*fn)()) { return method("!", fn); }
+            template <typename Ret> DataType::Property& opNot(Ret (*fn)(Cls*))  { return pseudoMethod("!", fn); }
+
+            template <typename Ret> DataType::Property& opInvert()                 { return method<Ret>("~", &Cls::operator ~); }
+            template <typename Ret> DataType::Property& opInvert(Ret (Cls::*fn)()) { return method("~", fn); }
+            template <typename Ret> DataType::Property& opInvert(Ret (*fn)(Cls*))  { return pseudoMethod("~", fn); }
 
             template <typename T>
             DataType::Property& prop(const String& name, T Cls::*member) {
@@ -217,4 +260,6 @@ namespace bind {
         protected:
             bool m_hasDtor;
     };
+
+    #undef OP_BINDER
 };
