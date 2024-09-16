@@ -93,6 +93,29 @@ namespace bind {
             }
 
             template <typename Ret, typename... Args>
+            DataType::Property& method(const String& name, Ret (Cls::*fn)(Args...) const) {
+                DataType::Property::Flags f = { 0 };
+                f.can_read = 1;
+                f.is_method = 1;
+
+                Function* func = new Function(
+                    name,
+                    fn,
+                    Registry::MethodSignature<Ret, Cls, Args...>(),
+                    m_type->getOwnNamespace()
+                );
+
+                func->setCallHandler(new HostThisCallHandler(func));
+
+                return addProperty(
+                    Pointer(func),
+                    f,
+                    func->getSignature(),
+                    name
+                );
+            }
+
+            template <typename Ret, typename... Args>
             DataType::Property& pseudoMethod(const String& name, Ret (*fn)(Cls*, Args...)) {
                 DataType::Property::Flags f = { 0 };
                 f.can_read = 1;

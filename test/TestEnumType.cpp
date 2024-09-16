@@ -28,30 +28,30 @@ TEST_CASE("Test EnumType", "[bind]") {
     EnumType* ec_i32 = (EnumType*)type<enum_class_type_i32>("enum_class_type_i32").getType();
     EnumType* ec_i64 = (EnumType*)type<enum_class_type_i64>("enum_class_type_i64").getType();
 
-    REQUIRE(e_u8->isEquivalentTo(ec_u8));
-    REQUIRE(e_u16->isEquivalentTo(ec_u16));
-    REQUIRE(e_u32->isEquivalentTo(ec_u32));
-    REQUIRE(e_u64->isEquivalentTo(ec_u64));
-    REQUIRE(e_i8->isEquivalentTo(ec_i8));
-    REQUIRE(e_i16->isEquivalentTo(ec_i16));
-    REQUIRE(e_i32->isEquivalentTo(ec_i32));
-    REQUIRE(e_i64->isEquivalentTo(ec_i64));
+    REQUIRE(e_u8->isConvertibleTo(ec_u8));
+    REQUIRE(e_u16->isConvertibleTo(ec_u16));
+    REQUIRE(e_u32->isConvertibleTo(ec_u32));
+    REQUIRE(e_u64->isConvertibleTo(ec_u64));
+    REQUIRE(e_i8->isConvertibleTo(ec_i8));
+    REQUIRE(e_i16->isConvertibleTo(ec_i16));
+    REQUIRE(e_i32->isConvertibleTo(ec_i32));
+    REQUIRE(e_i64->isConvertibleTo(ec_i64));
 
-    REQUIRE(e_u8->isEquivalentTo(Registry::GetType<u8>()));
+    REQUIRE(e_u8->isConvertibleTo(Registry::GetType<u8>()));
     REQUIRE(e_u8->getInfo().is_enum == 1);
-    REQUIRE(e_u16->isEquivalentTo(Registry::GetType<u16>()));
+    REQUIRE(e_u16->isConvertibleTo(Registry::GetType<u16>()));
     REQUIRE(e_u16->getInfo().is_enum == 1);
-    REQUIRE(e_u32->isEquivalentTo(Registry::GetType<u32>()));
+    REQUIRE(e_u32->isConvertibleTo(Registry::GetType<u32>()));
     REQUIRE(e_u32->getInfo().is_enum == 1);
-    REQUIRE(e_u64->isEquivalentTo(Registry::GetType<u64>()));
+    REQUIRE(e_u64->isConvertibleTo(Registry::GetType<u64>()));
     REQUIRE(e_u64->getInfo().is_enum == 1);
-    REQUIRE(e_i8->isEquivalentTo(Registry::GetType<i8>()));
+    REQUIRE(e_i8->isConvertibleTo(Registry::GetType<i8>()));
     REQUIRE(e_i8->getInfo().is_enum == 1);
-    REQUIRE(e_i16->isEquivalentTo(Registry::GetType<i16>()));
+    REQUIRE(e_i16->isConvertibleTo(Registry::GetType<i16>()));
     REQUIRE(e_i16->getInfo().is_enum == 1);
-    REQUIRE(e_i32->isEquivalentTo(Registry::GetType<i32>()));
+    REQUIRE(e_i32->isConvertibleTo(Registry::GetType<i32>()));
     REQUIRE(e_i32->getInfo().is_enum == 1);
-    REQUIRE(e_i64->isEquivalentTo(Registry::GetType<i64>()));
+    REQUIRE(e_i64->isConvertibleTo(Registry::GetType<i64>()));
     REQUIRE(e_i64->getInfo().is_enum == 1);
 
     EnumTypeBuilder b = extend<enum_type_u8>();

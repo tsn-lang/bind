@@ -15,16 +15,8 @@ template <typename T1, typename T2>
 void testPrimitiveTypeMethods1() {
     if constexpr (std::is_same_v<T1, T2>) {
         REQUIRE(Registry::GetType<T1>()->isEqualTo(Registry::GetType<T2>()));
-        REQUIRE(Registry::GetType<T1>()->isEquivalentTo(Registry::GetType<T2>()));
     } else {
         REQUIRE(!Registry::GetType<T1>()->isEqualTo(Registry::GetType<T2>()));
-        if constexpr (std::is_same_v<T1, bool> && std::is_same_v<T2, u8>) {
-            REQUIRE(Registry::GetType<T1>()->isEquivalentTo(Registry::GetType<T2>()));
-        } else if constexpr (std::is_same_v<T1, u8> && std::is_same_v<T2, bool>) {
-            REQUIRE(Registry::GetType<T1>()->isEquivalentTo(Registry::GetType<T2>()));
-        } else {
-            REQUIRE(!Registry::GetType<T1>()->isEquivalentTo(Registry::GetType<T2>()));
-        }
     }
     
     if constexpr (std::is_same_v<T1, void>) {
@@ -99,8 +91,6 @@ void testPointerTypeMethods1() {
     } else {
         REQUIRE(!Registry::GetType<T1*>()->isEqualTo(Registry::GetType<T2*>()));
     }
-    
-    REQUIRE(Registry::GetType<T1*>()->isEquivalentTo(Registry::GetType<T2*>()));
 }
 
 template <typename T>
@@ -181,20 +171,12 @@ void testMethodsOnObjects() {
     REQUIRE(!obj0->isEqualTo(obj1));
     REQUIRE(!obj1->isEqualTo(obj0));
 
-    REQUIRE(obj0->isEquivalentTo(obj0));
-    REQUIRE(obj0->isEquivalentTo(obj3));
-    REQUIRE(obj1->isEquivalentTo(obj1));
-    REQUIRE(!obj0->isEquivalentTo(obj1));
-    REQUIRE(!obj1->isEquivalentTo(obj0));
-
-    // empty structs are convertible to each other when the destination type is
-    // trivially copyable
-    REQUIRE(obj0->isConvertibleTo(obj0));
-    REQUIRE(obj0->isConvertibleTo(obj1));
-    REQUIRE(obj1->isConvertibleTo(obj0));
-    REQUIRE(obj1->isConvertibleTo(obj1));
-    REQUIRE(obj2->isConvertibleTo(obj0));
-    REQUIRE(obj2->isConvertibleTo(obj1));
+    // empty structs are not convertible to each other if they are not fully
+    // defined
+    REQUIRE(!obj0->isConvertibleTo(obj1));
+    REQUIRE(!obj1->isConvertibleTo(obj0));
+    REQUIRE(!obj2->isConvertibleTo(obj0));
+    REQUIRE(!obj2->isConvertibleTo(obj1));
 
     // empty structs are not convertible to each other when the destination type
     // is not trivially copyable
@@ -219,8 +201,8 @@ void testMethodsOnObjects() {
     bobj3.prop("b", &equivalent_to_plain_struct::b);
     bobj3.prop("c", &equivalent_to_plain_struct::c);
 
-    REQUIRE(obj0->isEquivalentTo(obj3));
-    REQUIRE(obj3->isEquivalentTo(obj0));
+    // structs are now fully defined, the trivially copyable ones with the same
+    // shape should now be convertible to each other
     REQUIRE(obj0->isConvertibleTo(obj3));
     REQUIRE(obj3->isConvertibleTo(obj0));
 

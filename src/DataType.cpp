@@ -169,11 +169,11 @@ namespace bind {
             
             if (search.returnType) {
                 if (search.returnTypeStrict) {
-                    if (!sig->getReturnType()->isEquivalentTo(search.returnType)) continue;
+                    if (!sig->getReturnType()->isEqualTo(search.returnType)) continue;
                 } else {
                     if (!sig->getReturnType()->isConvertibleTo(search.returnType)) continue;
 
-                    if (strictMatchCount <= 1 && singleStrictMatch && !sig->getReturnType()->isEquivalentTo(search.returnType)) {
+                    if (strictMatchCount <= 1 && singleStrictMatch && !sig->getReturnType()->isEqualTo(search.returnType)) {
                         isStrictMatch = false;
                     }
                 }
@@ -189,7 +189,7 @@ namespace bind {
                     DataType* providedType = search.argTypes[a];
 
                     if (search.argTypesStrict) {
-                        if (!args[a].type->isEquivalentTo(providedType)) {
+                        if (!args[a].type->isEqualTo(providedType)) {
                             isMatch = false;
                             break;
                         }
@@ -199,7 +199,7 @@ namespace bind {
                             break;
                         }
 
-                        if (strictMatchCount <= 1 && isStrictMatch && singleStrictMatch && !args[a].type->isEquivalentTo(providedType)) {
+                        if (strictMatchCount <= 1 && isStrictMatch && singleStrictMatch && !args[a].type->isEqualTo(providedType)) {
                             isStrictMatch = false;
                         }
                     }
@@ -251,7 +251,7 @@ namespace bind {
             bool isMatch = true;
             for (u32 a = 0;a < args.size();a++) {
                 if (strict) {
-                    if (!args[a].type->isEquivalentTo(argTypes[a])) {
+                    if (!args[a].type->isEqualTo(argTypes[a])) {
                         isMatch = false;
                         break;
                     }
@@ -261,7 +261,7 @@ namespace bind {
                         break;
                     }
 
-                    if (strictMatchCount <= 1 && isStrictMatch && singleStrictMatch && !args[a].type->isEquivalentTo(argTypes[a])) {
+                    if (strictMatchCount <= 1 && isStrictMatch && singleStrictMatch && !args[a].type->isEqualTo(argTypes[a])) {
                         isStrictMatch = false;
                     }
                 }
@@ -294,7 +294,7 @@ namespace bind {
             if (p.name.size() != CastOperatorNameLen) continue;
             if (p.name != CastOperatorName) continue;
 
-            if (!sig->getReturnType()->isEquivalentTo(resultType)) continue;
+            if (!sig->getReturnType()->isEqualTo(resultType)) continue;
 
             return (Function*)p.address.get();
         }
@@ -335,11 +335,7 @@ namespace bind {
 
         DataType* self = getEffectiveType();
 
-        auto copyCtors = to->findMethods(
-            FuncMatch(ConstructorName)
-            .argTps({ self }, true)
-            .access(accessMask)
-        );
+        auto copyCtors = to->findConstructors({ self }, true, accessMask);
 
         // conversion via copy constructor
         if (copyCtors.size() == 1) return true;
@@ -352,9 +348,12 @@ namespace bind {
             return false;
         }
 
+        u32 accountedSize = 0;
+
         for (u32 i = 0;i < to->m_props.size();i++) {
             auto& rProp = to->m_props[i];
             if (rProp.offset == -1) continue;
+            accountedSize += rProp.type->getInfo().size;
 
             bool found = false;
             for (u32 j = 0;j < m_props.size();j++) {
@@ -378,50 +377,13 @@ namespace bind {
             }
         }
 
-        // Yup
-        return true;
-    }
-
-    bool DataType::isEquivalentTo(DataType* _to) const {
-        if (!_to) return false;
-        if (isEqualTo(_to)) return true;
-
-        DataType* to = _to->getEffectiveType();
-
-        if (
-            m_info.size                         != to->m_info.size                          ||
-            m_info.is_trivial                   != to->m_info.is_trivial                    ||
-            m_info.is_standard_layout           != to->m_info.is_standard_layout            ||
-            m_info.is_trivially_constructible   != to->m_info.is_trivially_constructible    ||
-            m_info.is_trivially_copyable        != to->m_info.is_trivially_copyable         ||
-            m_info.is_trivially_destructible    != to->m_info.is_trivially_destructible     ||
-            m_info.is_primitive                 != to->m_info.is_primitive                  ||
-            m_info.is_floating_point            != to->m_info.is_floating_point             ||
-            m_info.is_integral                  != to->m_info.is_integral                   ||
-            m_info.is_unsigned                  != to->m_info.is_unsigned                   ||
-            m_info.is_function                  != to->m_info.is_function                   ||
-            m_props.size()                      != to->m_props.size()
-        ) return false;
-
-        const DataType* self = getEffectiveType();
-
-        for (u32 i = 0;i < self->m_props.size();i++) {
-            const Property& p1 = self->m_props[i];
-            const Property& p2 = to->m_props[i];
-
-            if (p1.offset != p2.offset) return false;
-            if (p1.accessFlags != p2.accessFlags) return false;
-            if (p1.flags.can_read != p2.flags.can_read) return false;
-            if (p1.flags.can_write != p2.flags.can_write) return false;
-            if (p1.flags.is_static != p2.flags.is_static) return false;
-            if (p1.flags.is_method != p2.flags.is_method) return false;
-            if (p1.flags.is_pseudo_method != p2.flags.is_pseudo_method) return false;
-            if (p1.flags.is_ctor != p2.flags.is_ctor) return false;
-            if (p1.flags.is_dtor != p2.flags.is_dtor) return false;
-            if (p1.name.size() != p2.name.size() || p1.name != p2.name) return false;
-            if (!p1.type->isEqualTo(p2.type)) return false;
+        if (accountedSize != to->m_info.size) {
+            // Nope, there are fields in the destination type that haven't been
+            // bound
+            return false;
         }
 
+        // Yup
         return true;
     }
 

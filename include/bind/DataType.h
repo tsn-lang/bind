@@ -154,62 +154,13 @@ namespace bind {
              * - The other type has a constructor which takes exactly one parameter,
              *   and that parameter's type is this type
              * 
-             * - The other type is trivially copyable, and every member property of the
-             * other type has a counterpart on this type which has the same name and has
-             * a type which can be converted to the destination property's type
+             * - The other type is trivially copyable, fully defined, and every member
+             * property of the other type has a counterpart on this type which has the same
+             * name and has a type which can be converted to the destination property's type
              * 
              * @return Returns true if this type is convertible to the other type
              */
             virtual bool isConvertibleTo(DataType* to, AccessFlags accessMask = FullAccessRights) const;
-
-            /**
-             * @brief Checks if this type is equivalent to some data type. A data type is
-             * equivalent to another data type if all of the following are true:
-             * 
-             * All of the following attributes for both types must be the same
-             * 
-             *     - size
-             * 
-             *     - is_trivial
-             * 
-             *     - is_standard_layout
-             * 
-             *     - is_trivially_constructible 
-             * 
-             *     - is_trivially_copyable
-             * 
-             *     - is_trivially_destructible
-             * 
-             *     - is_primitive
-             * 
-             *     - is_floating_point
-             * 
-             *     - is_integral
-             * 
-             *     - is_unsigned
-             * 
-             *     - is_function
-             * 
-             *     - is_pointer
-             * 
-             * Both types must have the same number of properties
-             * 
-             * Every property on one type must have a counterpart on the other type which has
-             * 
-             *     - The same name
-             * 
-             *     - The same offset/address
-             * 
-             *     - The same flags
-             * 
-             *     - The same type
-             * 
-             * Both types must inherit from the same types in the same order, or both must not
-             * inherit from any base types
-             *   
-             * @return Returns true if this type is equivalent to the other type
-             */
-            virtual bool isEquivalentTo(DataType* to) const;
 
             /**
              * @brief Checks if this type is equal to some data type. A data type is equal to
