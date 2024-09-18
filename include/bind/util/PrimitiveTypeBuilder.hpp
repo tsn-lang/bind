@@ -151,6 +151,11 @@ namespace bind {
             template <typename Ret, typename Rhs> DataType::Property& opGreaterEq (Ret (*fn)(Prim*, Rhs)) { return method(">=", fn); }
             template <typename Ret, typename Rhs> DataType::Property& opLess      (Ret (*fn)(Prim*, Rhs)) { return method("<" , fn); }
             template <typename Ret, typename Rhs> DataType::Property& opLessEq    (Ret (*fn)(Prim*, Rhs)) { return method("<=", fn); }
+            template <typename Ret>               DataType::Property& opPreInc    (Ret (*fn)(Prim*))      { return method("++", fn); }
+            template <typename Ret>               DataType::Property& opPostInc   (Ret (*fn)(Prim*, i32)) { return method("++", fn); }
+            template <typename Ret>               DataType::Property& opPreDec    (Ret (*fn)(Prim*))      { return method("--", fn); }
+            template <typename Ret>               DataType::Property& opPostDec   (Ret (*fn)(Prim*, i32)) { return method("--", fn); }
+            template <typename Ret>               DataType::Property& opNegate    (Ret (*fn)(Prim*))      { return method("-" , fn); }
             template <typename Ret>               DataType::Property& opNot       (Ret (*fn)(Prim*))      { return method("!" , fn); }
             template <typename Ret>               DataType::Property& opInvert    (Ret (*fn)(Prim*))      { return method("~" , fn); }
 

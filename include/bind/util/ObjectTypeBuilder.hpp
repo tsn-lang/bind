@@ -208,6 +208,26 @@ namespace bind {
             OP_BINDER(<, opLess);
             OP_BINDER(<=, opLessEq);
             
+            template <typename Ret> DataType::Property& opPreInc()                 { return method<Ret>("++", &Cls::operator ++); }
+            template <typename Ret> DataType::Property& opPreInc(Ret (Cls::*fn)()) { return method("++", fn); }
+            template <typename Ret> DataType::Property& opPreInc(Ret (*fn)(Cls*))  { return pseudoMethod("++", fn); }
+
+            template <typename Ret> DataType::Property& opPostInc()                 { return method<Ret, i32>("++", &Cls::operator ++); }
+            template <typename Ret> DataType::Property& opPostInc(Ret (Cls::*fn)(i32)) { return method("++", fn); }
+            template <typename Ret> DataType::Property& opPostInc(Ret (*fn)(Cls*, i32))  { return pseudoMethod("++", fn); }
+
+            template <typename Ret> DataType::Property& opPreDec()                 { return method<Ret>("--", &Cls::operator --); }
+            template <typename Ret> DataType::Property& opPreDec(Ret (Cls::*fn)()) { return method("--", fn); }
+            template <typename Ret> DataType::Property& opPreDec(Ret (*fn)(Cls*))  { return pseudoMethod("--", fn); }
+
+            template <typename Ret> DataType::Property& opPostDec()                 { return method<Ret, i32>("--", &Cls::operator --); }
+            template <typename Ret> DataType::Property& opPostDec(Ret (Cls::*fn)(i32)) { return method("--", fn); }
+            template <typename Ret> DataType::Property& opPostDec(Ret (*fn)(Cls*, i32))  { return pseudoMethod("--", fn); }
+            
+            template <typename Ret> DataType::Property& opNegate()                 { return method<Ret>("-", &Cls::operator -); }
+            template <typename Ret> DataType::Property& opNegate(Ret (Cls::*fn)()) { return method("-", fn); }
+            template <typename Ret> DataType::Property& opNegate(Ret (*fn)(Cls*))  { return pseudoMethod("-", fn); }
+            
             template <typename Ret> DataType::Property& opNot()                 { return method<Ret>("!", &Cls::operator !); }
             template <typename Ret> DataType::Property& opNot(Ret (Cls::*fn)()) { return method("!", fn); }
             template <typename Ret> DataType::Property& opNot(Ret (*fn)(Cls*))  { return pseudoMethod("!", fn); }
