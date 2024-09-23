@@ -1,4 +1,5 @@
 #pragma once
+#include <bind/types.h>
 #include <utils/String.h>
 #include <utils/Array.h>
 
