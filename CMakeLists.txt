@@ -10,11 +10,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-set(
-    bind_include_dirs
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/deps/utils/include
-)
+set(TSN_BIND_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE STRING "TSN Bind Include Directory")
 
 set (all_sources "")
 macro(add_sources group dir)
@@ -41,14 +37,15 @@ add_sources("src/util"          "util")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-include_directories(${bind_include_dirs})
+include_directories(${TSN_BIND_INCLUDE_DIR} ${TSN_UTILS_INCLUDE_DIR} ${FFI_INCLUDE_DIR})
 
-if (NOT TARGET utils)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/utils)
-endif()
+add_compile_definitions(-DFFI_STATIC_BUILD=1)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/utils)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/libffi)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 add_library(bind ${all_sources})
-target_link_libraries(bind utils)
+target_link_libraries(bind utils ffi_static)
 
 if (CMAKE_VERSION VERSION_GREATER 3.7.8)
     if (MSVC_IDE)

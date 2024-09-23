@@ -4,7 +4,7 @@
 #include <bind/AliasType.h>
 #include <bind/PointerType.h>
 #include <bind/Function.h>
-#include <bind/Value.h>
+#include <bind/ValuePointer.h>
 #include <bind/Namespace.hpp>
 #include <bind/Registry.hpp>
 #include <bind/util/ObjectTypeBuilder.hpp>
@@ -17,7 +17,7 @@
 namespace bind {
     template <typename T>
     std::enable_if_t<std::is_class_v<T>, ObjectTypeBuilder<T>>
-    build(const String& name);
+    type(const String& name);
 
     template <typename T>
     std::enable_if_t<std::is_class_v<T>, ObjectTypeBuilder<T>>
@@ -25,7 +25,7 @@ namespace bind {
 
     template <typename T>
     std::enable_if_t<std::is_fundamental_v<T>, PrimitiveTypeBuilder<T>>
-    build(const String& name);
+    type(const String& name);
 
     template <typename T>
     std::enable_if_t<std::is_fundamental_v<T>, PrimitiveTypeBuilder<T>>
@@ -33,14 +33,14 @@ namespace bind {
 
     template <typename T>
     std::enable_if_t<std::is_enum_v<T>, EnumTypeBuilder<T>>
-    build(const String& name);
+    type(const String& name);
     
     template <typename T>
     std::enable_if_t<std::is_enum_v<T>, EnumTypeBuilder<T>>
     extend();
 
     template <typename T>
-    Value* global(const String& name, T* val);
+    ValuePointer* global(const String& name, T* val);
 
     template <typename Ret, typename... Args>
     Function* function(const String& name, Ret (*fn)(Args...));

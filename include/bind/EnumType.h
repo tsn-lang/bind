@@ -7,10 +7,13 @@ namespace bind {
         public:
             struct Field {
                 String name;
-                u64 value;
+                union {
+                    u64 u;
+                    i64 i;
+                } value;
             };
 
-            EnumType(const String& name, u8 bits, Namespace* ns);
+            EnumType(const String& name, const type_meta& meta, Namespace* ns);
             ~EnumType();
 
             const Array<Field>& getFields() const;

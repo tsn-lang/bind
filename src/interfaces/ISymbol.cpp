@@ -1,17 +1,22 @@
 #include <bind/interfaces/ISymbol.h>
 #include <bind/Namespace.h>
 #include <bind/FunctionType.h>
+#include <bind/Registry.h>
 #include <utils/Array.hpp>
 #include <unordered_map>
 
 namespace bind {
-    ISymbol::ISymbol(const String& name, const String& symName, SymbolType type)
-        : m_name(name), m_symName(symName), m_type(type), m_hash(Hash(symName))
+    ISymbol::ISymbol(const String& name, const String& fullName, const String& symName, SymbolType type)
+        : m_name(name), m_fullName(fullName), m_symName(symName), m_type(type), m_hash(genSymbolID(symName))
     {
     }
 
     const String& ISymbol::getName() const {
         return m_name;
+    }
+
+    const String& ISymbol::getFullName() const {
+        return m_fullName;
     }
 
     const String& ISymbol::getSymbolName() const {
@@ -22,22 +27,47 @@ namespace bind {
         return m_type;
     }
 
-    u64 ISymbol::getSymbolHash() const {
+    symbol_id ISymbol::getSymbolId() const {
         return m_hash;
     }
 
-    String ISymbol::genNamespaceSymbolName(Namespace* ns, const String& name) {
+    String ISymbol::genFullSymbolName(Namespace* ns, const String& name) {
         String ret;
-        if (ns) ret = ns->getSymbolName();
-        ret += ".N";
+        if (ns) {
+            ret = ns->getSymbolName();
+            if (ret.size() > 0) ret += "::";
+        }
+
+        ret += name;
+        return ret;
+    }
+
+    String ISymbol::genNamespaceSymbolName(Namespace* ns, const String& name) {
+        if (name.size() == 0) return "";
+
+        String ret;
+        if (ns) {
+            ret = ns->getSymbolName();
+            if (ret.size() > 0) ret += ".";
+        }
+
+        ret += "N";
+        
         ret += name;
         return ret;
     }
 
     String ISymbol::genFuncSymbolName(Namespace* ns, const String& name, FunctionType* sig) {
         String ret = sig->getReturnType()->getSymbolName() + "_";
-        if (ns) ret += ns->getSymbolName();
-        ret += ".F";
+        if (ns) {
+            const String& n = ns->getSymbolName();
+            if (n.size() > 0) {
+                ret += n;
+                ret += ".";
+            }
+        }
+
+        ret += "F";
         ret += name;
 
         ret += "(";
@@ -53,21 +83,31 @@ namespace bind {
 
     String ISymbol::genTypeSymbolName(Namespace* ns, const String& name) {
         String ret;
-        if (ns) ret = ns->getSymbolName();
-        ret += ".T";
+        if (ns) {
+            ret = ns->getSymbolName();
+            if (ret.size() > 0) ret += ".";
+        }
+
+        ret += "T";
         ret += name;
         return ret;
     }
 
     String ISymbol::genValueSymbolName(Namespace* ns, const String& name) {
         String ret;
-        if (ns) ret = ns->getSymbolName();
-        ret += ".V";
+        if (ns) {
+            ret = ns->getSymbolName();
+            if (ret.size() > 0) ret += ".";
+        }
+
+        ret += "V";
         ret += name;
         return ret;
     }
 
-    u64 ISymbol::Hash(const String& symName) {
+    symbol_id ISymbol::genSymbolID(const String& symName) {
+        if (symName.size() == 0) return 0;
+        
         std::hash<std::string> h;
         return h(symName);
     }

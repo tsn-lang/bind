@@ -7,8 +7,12 @@
 #include <utils/Array.h>
 #include <utils/Pointer.h>
 
+#define FFI_STATIC_BUILD
+#include <ffi.h>
+
 namespace bind {
     class Function;
+    class PointerType;
 
     class DataType : public IWithFixedUserData<32>, public ISymbol {
         public:
@@ -65,8 +69,8 @@ namespace bind {
                 String name;
             };
 
-            DataType(const String& name, Namespace* ns);
             DataType(const String& name, const type_meta& meta, Namespace* ns);
+            DataType(const String& name, const String& fullName, const type_meta& meta, Namespace* ns);
             virtual ~DataType();
 
             /**
@@ -78,7 +82,7 @@ namespace bind {
              * @brief Returns the namespace that contains this type's methods, constructor,
              * destructor, and static properties
              */
-            const Namespace* getOwnNamespace() const;
+            Namespace* getOwnNamespace() const;
 
             /**
              * @brief Returns a reference to this type's array of properties
@@ -141,76 +145,22 @@ namespace bind {
              * @brief Checks if this type is convertible to some data type. A data type
              * is convertible to another data type if one of the following is true:
              * 
-             * - Both this type and the other type are primitives
+             * - Both this type and the other type are primitives or pointers
+             * 
+             * - This type is equal to the other type
              * 
              * - This type has a cast operator override that returns the other type
              * 
              * - The other type has a constructor which takes exactly one parameter,
              *   and that parameter's type is this type
              * 
+             * - The other type is trivially copyable, fully defined, and every member
+             * property of the other type has a counterpart on this type which has the same
+             * name and has a type which can be converted to the destination property's type
+             * 
              * @return Returns true if this type is convertible to the other type
              */
             virtual bool isConvertibleTo(DataType* to, AccessFlags accessMask = FullAccessRights) const;
-
-            /**
-             * @brief Checks if this type can be implicitly assigned to objects of another
-             * type. A data type is implicitly assignable to another data type if one of
-             * the following is true:
-             * 
-             * - Both this type and the other type are primitives
-             * 
-             * - Both this type and the other type are the same trivially copyable type
-             * 
-             * - Both this type and the other type are equivalent and trivially copyable
-             * 
-             * @return Returns true if this type is implicitly assignable to the other type
-             */
-            virtual bool isImplicitlyAssignableTo(DataType* to) const;
-
-            /**
-             * @brief Checks if this type is equivalent to some data type. A data type is
-             * equivalent to another data type if all of the following are true:
-             * 
-             * All of the following attributes for both types must be the same
-             * 
-             *     - is_pod
-             * 
-             *     - is_trivially_constructible 
-             * 
-             *     - is_trivially_copyable
-             * 
-             *     - is_trivially_destructible
-             * 
-             *     - is_primitive
-             * 
-             *     - is_floating_point
-             * 
-             *     - is_integral
-             * 
-             *     - is_unsigned
-             * 
-             *     - is_function
-             * 
-             *     - is_pointer
-             * 
-             * Both types must have the same number of properties
-             * 
-             * Every property on one type must have a counterpart on the other type which has
-             * 
-             *     - The same name
-             * 
-             *     - The same offset/address
-             * 
-             *     - The same flags
-             * 
-             *     - The same type
-             * 
-             * Both types must inherit from the same types in the same order, or both must not
-             * inherit from any base types
-             *   
-             * @return Returns true if this type is equivalent to the other type
-             */
-            virtual bool isEquivalentTo(DataType* to) const;
 
             /**
              * @brief Checks if this type is equal to some data type. A data type is equal to
@@ -235,11 +185,24 @@ namespace bind {
              */
             DataType* getEffectiveType() const;
 
+            /**
+             * @brief Get a pointer type that points to this type
+             */
+            PointerType* getPointerType();
+
+            /**
+             * @brief Gets a pointer to this type's ffi_type, for use with libffi
+             */
+            ffi_type* getFFI();
+
         protected:
             friend class ITypeBuilder;
 
             type_meta m_info;
             Namespace* m_ownNamespace;
+            PointerType* m_pointerToSelf;
             Array<Property> m_props;
+            ffi_type m_ffi;
+            Array<ffi_type*> m_ffiElems;
     };
 };

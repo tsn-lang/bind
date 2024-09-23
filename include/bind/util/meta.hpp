@@ -8,6 +8,14 @@
 namespace bind {
     template <typename T>
     inline std::size_t type_hash() {
+        if constexpr (std::is_reference_v<T>) {
+            // `some_type&` has the same hash as `some_type`
+            // just use `some_type*`, since it's effectively
+            // the same as `some_type&` as far as I know, except
+            // that it has a different hash
+            return std::type_index(typeid(std::remove_reference_t<T>*)).hash_code();
+        }
+
         return std::type_index(typeid(T)).hash_code();
     }
 
@@ -23,10 +31,11 @@ namespace bind {
         if constexpr (!std::is_same_v<void, T>) sz = (u16)sizeof(T);
         return {
             sz,                                                   // size
-            std::is_trivial_v<T> && std::is_standard_layout_v<T>, // is_pod
-            std::is_trivially_constructible_v<T>,                 // is_trivially_constructible
+            std::is_trivial_v<T>,                                 // is_trivial
+            std::is_standard_layout_v<T>,                         // is_standard_layout
+            __has_trivial_constructor(T),                         // is_trivially_constructible
             std::is_trivially_copyable_v<T>,                      // is_trivially_copyable
-            std::is_trivially_destructible_v<T>,                  // is_trivially_destructible
+            __has_trivial_destructor(T),                          // is_trivially_destructible
             std::is_fundamental_v<T>,                             // is_primitive
             std::is_floating_point_v<T>,                          // is_floating_point
             std::is_integral_v<T>,                                // is_integral
