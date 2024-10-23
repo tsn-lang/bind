@@ -37,10 +37,6 @@ add_sources("src/util"          "util")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-include_directories(${TSN_BIND_INCLUDE_DIR} ${TSN_UTILS_INCLUDE_DIR} ${FFI_INCLUDE_DIR})
-
-add_compile_definitions(-DFFI_STATIC_BUILD=1)
-
 if (NOT TARGET utils)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/utils)
 endif()
@@ -48,6 +44,8 @@ endif()
 if (NOT TARGET ffi_static)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/libffi)
 endif()
+
+include_directories(${TSN_BIND_INCLUDE_DIR} ${TSN_UTILS_INCLUDE_DIR} ${FFI_INCLUDE_DIR})
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 

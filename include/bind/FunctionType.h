@@ -2,6 +2,7 @@
 #include <bind/DataType.h>
 
 #define FFI_STATIC_BUILD
+#define FFI_BUILDING
 #include <ffi.h>
 
 namespace bind {
