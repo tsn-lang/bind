@@ -74,8 +74,8 @@ namespace bind {
         if (!instance) throw Exception("Registry::Add - Registry has not been created");
 
         std::unique_lock l(instance->m_mutex);
-        auto it = instance->m_typeMap.find(fn->getSymbolId());
-        if (it != instance->m_typeMap.end()) {
+        auto it = instance->m_funcMap.find(fn->getSymbolId());
+        if (it != instance->m_funcMap.end()) {
             throw Exception(String::Format("Registry::Add - Function '%s' already registered", fn->getFullName().c_str()));
         }
 
@@ -86,9 +86,9 @@ namespace bind {
         if (!instance) throw Exception("Registry::Add - Registry has not been created");
 
         std::unique_lock l(instance->m_mutex);
-        auto it = instance->m_typeMap.find(val->getSymbolId());
-        if (it != instance->m_typeMap.end()) {
-            throw Exception(String::Format("Registry::Add - Function '%s' already registered", val->getFullName().c_str()));
+        auto it = instance->m_valueMap.find(val->getSymbolId());
+        if (it != instance->m_valueMap.end()) {
+            throw Exception(String::Format("Registry::Add - Value '%s' already registered", val->getFullName().c_str()));
         }
 
         instance->m_valueMap.insert(std::pair<symbol_id, ValuePointer*>(val->getSymbolId(), val));
@@ -98,12 +98,54 @@ namespace bind {
         if (!instance) throw Exception("Registry::Add - Registry has not been created");
 
         std::unique_lock l(instance->m_mutex);
-        auto it = instance->m_typeMap.find(ns->getSymbolId());
-        if (it != instance->m_typeMap.end()) {
-            throw Exception(String::Format("Registry::Add - Function '%s' already registered", ns->getFullName().c_str()));
+        auto it = instance->m_namespaceMap.find(ns->getSymbolId());
+        if (it != instance->m_namespaceMap.end()) {
+            throw Exception(String::Format("Registry::Add - Namespace '%s' already registered", ns->getFullName().c_str()));
         }
 
         instance->m_namespaceMap.insert(std::pair<symbol_id, Namespace*>(ns->getSymbolId(), ns));
+    }
+
+    void Registry::Remove(DataType* tp) {
+        if (!instance) throw Exception("Registry::Remove - Registry has not been created");
+
+        Remove(tp->getOwnNamespace());
+
+        std::unique_lock l(instance->m_mutex);
+
+        auto it = instance->m_typeMap.find(tp->getSymbolId());
+        if (it != instance->m_typeMap.end()) instance->m_typeMap.erase(it);
+
+        for (auto n = instance->m_hostTypeMap.begin();n != instance->m_hostTypeMap.end();n++) {
+            if (n->second == tp) {
+                instance->m_hostTypeMap.erase(n);
+                break;
+            }
+        }
+    }
+
+    void Registry::Remove(Function* fn) {
+        if (!instance) throw Exception("Registry::Remove - Registry has not been created");
+
+        std::unique_lock l(instance->m_mutex);
+        auto it = instance->m_funcMap.find(fn->getSymbolId());
+        if (it != instance->m_funcMap.end()) instance->m_funcMap.erase(it);
+    }
+
+    void Registry::Remove(ValuePointer* val) {
+        if (!instance) throw Exception("Registry::Remove - Registry has not been created");
+        
+        std::unique_lock l(instance->m_mutex);
+        auto it = instance->m_valueMap.find(val->getSymbolId());
+        if (it != instance->m_valueMap.end()) instance->m_valueMap.erase(it);
+    }
+
+    void Registry::Remove(Namespace* ns) {
+        if (!instance) throw Exception("Registry::Remove - Registry has not been created");
+        
+        std::unique_lock l(instance->m_mutex);
+        auto it = instance->m_namespaceMap.find(ns->getSymbolId());
+        if (it != instance->m_namespaceMap.end()) instance->m_namespaceMap.erase(it);
     }
 
     DataType* Registry::GetType(symbol_id id) {
@@ -181,5 +223,44 @@ namespace bind {
     Namespace* Registry::GlobalNamespace() {
         if (!instance) throw Exception("Registry::GlobalNamespace - Registry has not been created");
         return instance->m_global;
+    }
+
+    
+    FunctionType* Registry::Signature(DataType* retTp, const Array<DataType*>& argTps) {
+        return Signature(retTp, const_cast<DataType**>(argTps.data()), argTps.size());
+    }
+    
+    FunctionType* Registry::Signature(DataType* retTp, DataType** argTps, u32 argCount, bool* didExist) {
+        String name = retTp->getFullName() + "(";
+
+        for (u8 i = 0;i < argCount;i++) {
+            if (i > 0) name += ",";
+            name += argTps[i]->getFullName();
+        }
+
+        name += ")";
+
+        symbol_id id = ISymbol::genSymbolID(ISymbol::genTypeSymbolName(nullptr, name));
+        DataType* tp = GetType(id);
+        if (tp) {
+            if (didExist) *didExist = true;
+            return (FunctionType*)tp;
+        }
+
+        if (didExist) *didExist = false;
+
+        FunctionType* sig = new FunctionType(name, meta<void(*)()>());
+        
+        for (u8 i = 0;i < argCount;i++) {
+            sig->m_args.push(FunctionType::Argument(i, argTps[i]));
+        }
+
+        sig->m_returnType = retTp;
+
+        Add(sig);
+
+        sig->initCallInterface(FFI_DEFAULT_ABI);
+
+        return sig;
     }
 };

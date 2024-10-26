@@ -22,6 +22,10 @@ namespace bind {
             static void Add(Function* fn);
             static void Add(ValuePointer* val);
             static void Add(Namespace* ns);
+            static void Remove(DataType* tp);
+            static void Remove(Function* fn);
+            static void Remove(ValuePointer* val);
+            static void Remove(Namespace* ns);
             static DataType* GetType(symbol_id id);
             static Function* GetFunc(symbol_id id);
             static ValuePointer* GetValue(symbol_id id);
@@ -31,6 +35,9 @@ namespace bind {
             static Array<Function*> Functions();
             static Array<ValuePointer*> Values();
             static Namespace* GlobalNamespace();
+            
+            static FunctionType* Signature(DataType* returnType, const Array<DataType*>& args);
+            static FunctionType* Signature(DataType* returnType, DataType** args, u32 argCount, bool* didExist = nullptr);
 
             template <typename T>
             static DataType* GetType();

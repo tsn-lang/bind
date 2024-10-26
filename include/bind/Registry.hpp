@@ -80,32 +80,15 @@ namespace bind {
         DataType* argTps[] = { GetType<Args>()..., nullptr };
         u32 argCount = u32(sizeof(argTps) / sizeof(DataType*)) - 1;
 
-        String name = retTp->getFullName() + "(";
-        
         for (u8 i = 0;i < argCount;i++) {
             if (!argTps[i]) {
-                delete sig;
                 throw Exception(String::Format("Registry::Signature - Type '%s' of argument %d has not been registered", argTpNames[i], i));
             }
-            
-            if (i > 0) name += ",";
-            name += argTps[i]->getFullName();
         }
 
-        name += ")";
-
-        sig = new FunctionType(name, meta<Ret(*)(Args...)>());
-        
-        for (u8 i = 0;i < argCount;i++) {
-            sig->m_args.push(FunctionType::Argument(i, argTps[i]));
-        }
-
-        sig->m_returnType = retTp;
-
-        Add(sig, hash);
-
-        sig->initCallInterface(FFI_DEFAULT_ABI);
-
+        bool didExist = false;
+        sig = Signature(retTp, argTps, argCount, &didExist);
+        if (sig && !didExist) instance->m_hostTypeMap.insert(std::pair<size_t, DataType*>(hash, sig));
         return sig;
     }
 
