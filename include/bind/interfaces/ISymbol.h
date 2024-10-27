@@ -16,6 +16,7 @@ namespace bind {
     class ISymbol {
         public:
             ISymbol(const String& name, const String& fullName, const String& symName, SymbolType type);
+            virtual ~ISymbol();
 
             const String& getName() const;
             const String& getFullName() const;
@@ -31,10 +32,12 @@ namespace bind {
             static symbol_id genSymbolID(const String& symName);
         
         private:
+            friend class Namespace;
             String m_name;
             String m_fullName;
             String m_symName;
             SymbolType m_type;
             symbol_id m_hash;
+            Namespace* m_namespace;
     };
 };

@@ -29,6 +29,7 @@ namespace bind {
 
             operator DataType*() const;
             DataType* getType() const;
+            type_meta& getMeta() const;
 
         protected:
             EnumType::Field& _addEnumValue(const String& name, u64 value);

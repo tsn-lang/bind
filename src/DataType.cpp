@@ -45,6 +45,8 @@ namespace bind {
           m_info(meta), m_ownNamespace(new Namespace(ns, this)), m_pointerToSelf(nullptr)
     {
         Registry::Add(m_ownNamespace);
+        if (ns) ns->add(this);
+        else Registry::GlobalNamespace()->add(this);
 
         if (meta.is_primitive) {
             if (meta.is_integral) {
@@ -86,6 +88,8 @@ namespace bind {
           m_info(meta), m_ownNamespace(new Namespace(ns, this)), m_pointerToSelf(nullptr)
     {
         Registry::Add(m_ownNamespace);
+        if (ns) ns->add(this);
+        else Registry::GlobalNamespace()->add(this);
 
         if (meta.is_primitive) {
             if (meta.is_integral) {

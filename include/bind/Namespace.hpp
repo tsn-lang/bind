@@ -9,7 +9,7 @@ namespace bind {
         if (tp) throw Exception(String::Format("Namespace::type - Type '%s' has already been registered", type_name<T>()));
 
         ObjectTypeBuilder<T> ret = ObjectTypeBuilder<T>(name, this);
-        m_symbolMap.insert(std::pair<u64, ISymbol*>(ret.getType()->getSymbolId(), ret.getType()));
+        add(ret.getType());
         return ret;
     }
 
@@ -28,9 +28,7 @@ namespace bind {
         DataType* tp = Registry::GetType<T>();
         if (tp) throw Exception(String::Format("Namespace::type - Type '%s' has already been registered", type_name<T>()));
 
-        PrimitiveTypeBuilder<T> ret = PrimitiveTypeBuilder<T>(name, this);
-        m_symbolMap.insert(std::pair<u64, ISymbol*>(ret.getType()->getSymbolId(), ret.getType()));
-        return ret;
+        return PrimitiveTypeBuilder<T>(name, this);
     }
 
     template <typename T>
@@ -90,8 +88,6 @@ namespace bind {
         DataType* tp = Registry::GetType<T>();
         if (!tp) throw Exception(String::Format("Namespace::alias - Type '%s' has not been registered", type_name<T>()));
 
-        AliasType* ret = Namespace::alias(name, tp);
-        m_symbolMap.insert(std::pair<u64, ISymbol*>(ret->getSymbolId(), ret));
-        return ret;
+        return Namespace::alias(name, tp);
     }
 }

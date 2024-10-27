@@ -207,4 +207,8 @@ namespace bind {
     DataType* ITypeBuilder::getType() const {
         return m_type;
     }
+    
+    type_meta& ITypeBuilder::getMeta() const {
+        return m_type->m_info;
+    }
 };

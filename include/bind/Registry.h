@@ -38,6 +38,8 @@ namespace bind {
             
             static FunctionType* Signature(DataType* returnType, const Array<DataType*>& args);
             static FunctionType* Signature(DataType* returnType, DataType** args, u32 argCount, bool* didExist = nullptr);
+            static FunctionType* MethodSignature(DataType* returnType, DataType* thisType, const Array<DataType*>& args);
+            static FunctionType* MethodSignature(DataType* returnType, DataType* thisType, DataType** args, u32 argCount, bool* didExist = nullptr);
 
             template <typename T>
             static DataType* GetType();

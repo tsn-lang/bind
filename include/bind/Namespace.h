@@ -55,10 +55,15 @@ namespace bind {
             Namespace* getParent() const;
             DataType* getCorrespondingType() const;
             ISymbol* findSymbol(const String& symbolName) const;
+            void findSymbols(const String& name, Array<ISymbol*>& outResults) const;
+            const Array<ISymbol*>& getSymbols() const;
+            void add(ISymbol* sym);
+            void remove(ISymbol* sym);
         
         protected:
             Namespace* m_parent;
             DataType* m_forType;
             std::unordered_map<u64, ISymbol*> m_symbolMap;
+            Array<ISymbol*> m_symbols;
     };
 };

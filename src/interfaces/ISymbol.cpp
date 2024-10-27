@@ -7,8 +7,13 @@
 
 namespace bind {
     ISymbol::ISymbol(const String& name, const String& fullName, const String& symName, SymbolType type)
-        : m_name(name), m_fullName(fullName), m_symName(symName), m_type(type), m_hash(genSymbolID(symName))
+        : m_name(name), m_fullName(fullName), m_symName(symName), m_type(type), m_hash(genSymbolID(symName)),
+        m_namespace(nullptr)
     {
+    }
+
+    ISymbol::~ISymbol() {
+        if (m_namespace) m_namespace->remove(this);
     }
 
     const String& ISymbol::getName() const {

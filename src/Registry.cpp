@@ -17,10 +17,10 @@ namespace bind {
     Registry::~Registry() {
         std::unique_lock l(instance->m_mutex);
 
-        for (auto& it : instance->m_namespaceMap) delete it.second;
         for (auto& it : instance->m_valueMap) delete it.second;
         for (auto& it : instance->m_funcMap) delete it.second;
         for (auto& it : instance->m_typeMap) delete it.second;
+        for (auto& it : instance->m_namespaceMap) delete it.second;
         
         m_global = nullptr;
     }
@@ -257,6 +257,45 @@ namespace bind {
 
         sig->m_returnType = retTp;
 
+        Add(sig);
+
+        sig->initCallInterface(FFI_DEFAULT_ABI);
+
+        return sig;
+    }
+    
+    FunctionType* Registry::MethodSignature(DataType* retTp, DataType* selfTp, const Array<DataType*>& argTps) {
+        return MethodSignature(retTp, selfTp, const_cast<DataType**>(argTps.data()), argTps.size());
+    }
+
+    FunctionType* Registry::MethodSignature(DataType* retTp, DataType* selfTp, DataType** argTps, u32 argCount, bool* didExist) {
+        String name = retTp->getFullName() + " " + selfTp->getFullName() + "::(";
+        for (u8 i = 0;i < argCount;i++) {
+            if (i > 0) name += ",";
+            name += argTps[i]->getFullName();
+        }
+        
+        name += ")";
+
+        symbol_id id = ISymbol::genSymbolID(ISymbol::genTypeSymbolName(nullptr, name));
+        DataType* tp = GetType(id);
+        if (tp) {
+            if (didExist) *didExist = true;
+            return (FunctionType*)tp;
+        }
+
+        if (didExist) *didExist = false;
+
+        struct dummy {};
+
+        FunctionType* sig = new FunctionType(name, meta<void(dummy::*)()>());
+        for (u8 i = 0;i < argCount;i++) {
+            sig->m_args.push(FunctionType::Argument(i, argTps[i]));
+        }
+        
+        sig->m_returnType = retTp;
+        sig->m_thisType = selfTp;
+        
         Add(sig);
 
         sig->initCallInterface(FFI_DEFAULT_ABI);

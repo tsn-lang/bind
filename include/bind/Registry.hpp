@@ -130,10 +130,8 @@ namespace bind {
         DataType* argTps[] = { GetType<void*>(), selfTp->getPointerType(), GetType<Args>()... };
         u32 argCount = u32(sizeof(argTps) / sizeof(DataType*));
 
-        String name = retTp->getFullName() + " " + selfTp->getFullName() + "::(";
         for (u8 i = 0;i < argCount;i++) {
             if (!argTps[i]) {
-                delete sig;
                 throw Exception(
                     "Registry::MethodSignature - Type '%s' of %s argument %d has not been registered",
                     i <= 2 ? "implicit" : "explicit",
@@ -141,25 +139,14 @@ namespace bind {
                     i
                 );
             }
-
-            if (i > 0) name += ",";
-            name += argTps[i]->getFullName();
         }
-        
-        name += ")";
 
-        sig = new FunctionType(name, meta<Ret(Cls::*)(Args...)>());
-        for (u8 i = 0;i < argCount;i++) {
-            sig->m_args.push(FunctionType::Argument(i, argTps[i]));
+        bool didExist = false;
+        sig = MethodSignature(retTp, selfTp, argTps, argCount, &didExist);
+        if (sig && !didExist) {
+            instance->m_hostTypeMap.insert(std::pair<size_t, DataType*>(hash, sig));
+            sig->m_wrapperAddress = &_method_wrapper<Cls, Ret, Args...>;
         }
-        
-        sig->m_returnType = retTp;
-        sig->m_thisType = selfTp;
-        sig->m_wrapperAddress = &_method_wrapper<Cls, Ret, Args...>;
-        
-        Add(sig, hash);
-
-        sig->initCallInterface(FFI_DEFAULT_ABI);
 
         return sig;
     }

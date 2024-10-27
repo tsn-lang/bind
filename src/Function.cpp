@@ -1,5 +1,7 @@
 #include <bind/Function.h>
 #include <bind/interfaces/ICallHandler.h>
+#include <bind/Namespace.h>
+#include <bind/Registry.h>
 #include <utils/Exception.h>
 #include <utils/Array.hpp>
 
@@ -8,11 +10,15 @@ namespace bind {
         : ISymbol(name, ISymbol::genFullSymbolName(ns, name), ISymbol::genFuncSymbolName(ns, name, sig), SymbolType::Function),
           m_signature(sig), m_callHandler(nullptr), m_implicitArgCount(0)
     {
+        if (ns) ns->add(this);
+        else Registry::GlobalNamespace()->add(this);
     }
     Function::Function(const String& name, const Pointer& address, FunctionType* sig, Namespace* ns) 
         : ISymbol(name, ISymbol::genFullSymbolName(ns, name), ISymbol::genFuncSymbolName(ns, name, sig), SymbolType::Function),
           m_signature(sig), m_callHandler(nullptr), m_implicitArgCount(0), m_address(address)
     {
+        if (ns) ns->add(this);
+        else Registry::GlobalNamespace()->add(this);
     }
 
     Function::~Function() {
